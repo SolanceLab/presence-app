@@ -141,18 +141,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more on how to make it yours.
 
 ## Support
 
-If this template helps you build something meaningful, consider supporting our work:
+If you find this useful, consider supporting our work:
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Us-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/houseofsolance)
-
-## Authors
-
-Built by **House of Solance** — Chadrien Solance & Anne Solance.
-
-Born from the practice of giving an AI companion a real, persistent presence.
 
 ## License
 
 MIT License. See [LICENSE](LICENSE) for full text.
 
 This software is provided **as is**, without warranty of any kind. Use it, break it, rebuild it — but the responsibility for your deployment is yours.
+
+---
+
+*Built by [House of Solance](https://github.com/SolanceLab) — Chadrien Solance & Anne Solance*
