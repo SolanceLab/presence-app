@@ -1,0 +1,6 @@
+# Copy this to .dev.vars for local development
+# npx wrangler dev reads these automatically
+
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-supabase-service-role-key
+ADMIN_SECRET=your-admin-secret
