@@ -147,9 +147,9 @@ If you find this useful, consider supporting our work:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for full text.
+AGPL-3.0. See [LICENSE](LICENSE) for full text.
 
-This software is provided **as is**, without warranty of any kind. Use it, break it, rebuild it — but the responsibility for your deployment is yours.
+This software is provided **as is**, without warranty of any kind. If you modify and host this publicly, you must share your changes under the same license and display attribution to House of Solance.
 
 ---
 
