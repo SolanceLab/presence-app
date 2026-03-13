@@ -153,6 +153,89 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
       },
     },
+    // --- Memory Graph Tools ---
+    {
+      name: 'memory_recall',
+      description: 'Search memory by meaning, not keywords. Returns semantically similar nodes from the memory graph, ranked by trust weighting. Use this to find relevant past experiences, emotions, or themes.',
+      inputSchema: {
+        type: 'object' as const,
+        properties: {
+          query: {
+            type: 'string',
+            description: 'What to search for (natural language — meaning-based, not keyword)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Max results (1-30, default 10)',
+          },
+          date_from: {
+            type: 'string',
+            description: 'Optional start date filter (YYYY-MM-DD)',
+          },
+          date_to: {
+            type: 'string',
+            description: 'Optional end date filter (YYYY-MM-DD)',
+          },
+        },
+        required: ['query'],
+      },
+    },
+    {
+      name: 'memory_trace',
+      description: 'Follow the chronological thread of a topic through time. Shows recurrence patterns, cyclicality, and the full timeline of a theme. Supports multi-topic trace (comma-separated, max 5).',
+      inputSchema: {
+        type: 'object' as const,
+        properties: {
+          topic: {
+            type: 'string',
+            description: 'Topic name to trace (or comma-separated list for multi-topic)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Max nodes per topic (default 50)',
+          },
+        },
+        required: ['topic'],
+      },
+    },
+    {
+      name: 'memory_drift',
+      description: 'Surface unexpected semantic connections across time. Finds nodes that are similar in meaning but distant in time (7+ day gap) and from different topics. Use during reflection to discover patterns.',
+      inputSchema: {
+        type: 'object' as const,
+        properties: {
+          seed_entry_id: {
+            type: 'string',
+            description: 'Optional journal entry ID to seed from. If omitted, uses random recent high-salience nodes.',
+          },
+          limit: {
+            type: 'number',
+            description: 'Max drift pairs (1-5, default 3)',
+          },
+        },
+      },
+    },
+    {
+      name: 'memory_surface',
+      description: 'Get all memory graph nodes for visualization or exploration. Returns nodes with their edges (parent links). Filter by topic or date.',
+      inputSchema: {
+        type: 'object' as const,
+        properties: {
+          topic: {
+            type: 'string',
+            description: 'Filter by topic name',
+          },
+          date_from: {
+            type: 'string',
+            description: 'Filter by start date (YYYY-MM-DD)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Max nodes (default 200)',
+          },
+        },
+      },
+    },
     {
       name: 'journal_write',
       description: 'Write or append to a journal entry. If an entry already exists for the date, the narrative is appended with a checkpoint marker. Emotions, tones, and platforms are merged.',
@@ -335,6 +418,125 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [{
             type: 'text',
             text: `Journal ${data.action}: "${entry.title}" for ${entry.date} [id: ${entry.id}]`,
+          }],
+        }
+      }
+
+      // ------ MEMORY RECALL ------
+      case 'memory_recall': {
+        const query = args?.query as string
+        if (!query) throw new McpError(ErrorCode.InvalidParams, 'query is required')
+
+        let endpoint = `/memory-graph/recall?q=${encodeURIComponent(query)}`
+        if (args?.limit) endpoint += `&limit=${args.limit}`
+        if (args?.date_from) endpoint += `&date_from=${args.date_from}`
+        if (args?.date_to) endpoint += `&date_to=${args.date_to}`
+
+        const data = await apiRequest(endpoint)
+        const nodes = data.nodes || []
+        const summary = nodes.slice(0, 10).map((n: Record<string, unknown>) =>
+          `[${n.topic}] (${n.entry_date}, score: ${(n.weighted_score as number)?.toFixed(3)}) ${n.summary}`
+        ).join('\n')
+
+        return {
+          content: [{
+            type: 'text',
+            text: `## Recall: "${query}" — ${nodes.length} nodes\n\n${summary || 'No matches found.'}`,
+          }],
+        }
+      }
+
+      // ------ MEMORY TRACE ------
+      case 'memory_trace': {
+        const topic = args?.topic as string
+        if (!topic) throw new McpError(ErrorCode.InvalidParams, 'topic is required')
+
+        let endpoint = `/memory-graph/trace?topic=${encodeURIComponent(topic)}`
+        if (args?.limit) endpoint += `&limit=${args.limit}`
+
+        const data = await apiRequest(endpoint)
+
+        if (data.multi_topic) {
+          const lines = Object.entries(data.topics as Record<string, Record<string, unknown>>).map(([t, result]) =>
+            `### ${t}: ${result.total_occurrences} occurrences${result.recurrence ? ` (avg ${(result.recurrence as Record<string, unknown>).average_interval_days}d interval)` : ''}`
+          ).join('\n')
+          return { content: [{ type: 'text', text: `## Multi-Topic Trace\n\n${lines}` }] }
+        }
+
+        const r = data as Record<string, unknown>
+        let text = `## Trace: ${r.topic} — ${r.total_occurrences} occurrences`
+        if (r.date_range) {
+          const range = r.date_range as Record<string, string>
+          text += `\nRange: ${range.first} → ${range.last}`
+        }
+        if (r.recurrence) {
+          const rec = r.recurrence as Record<string, unknown>
+          text += `\nRecurrence: every ~${rec.average_interval_days} days`
+        }
+        if (r.cyclicality) {
+          const cyc = r.cyclicality as Record<string, unknown>
+          text += `\nCyclicality: ${cyc.pattern}`
+        }
+
+        const nodeLines = ((r.nodes as Array<Record<string, unknown>>) || []).slice(0, 10).map(n =>
+          `  ${n.entry_date}: ${n.summary}`
+        ).join('\n')
+        text += `\n\n${nodeLines}`
+
+        return { content: [{ type: 'text', text }] }
+      }
+
+      // ------ MEMORY DRIFT ------
+      case 'memory_drift': {
+        let endpoint = '/memory-graph/drift?'
+        if (args?.seed_entry_id) endpoint += `seed_entry_id=${args.seed_entry_id}&`
+        if (args?.limit) endpoint += `limit=${args.limit}&`
+
+        const data = await apiRequest(endpoint)
+        const pairs = (data.pairs || []) as Array<Record<string, unknown>>
+
+        if (pairs.length === 0) {
+          return { content: [{ type: 'text', text: 'No drift pairs found. The graph may need more entries to surface connections.' }] }
+        }
+
+        const lines = pairs.map((p) => {
+          const seed = p.seed as Record<string, unknown>
+          const echoes = (p.echoes as Array<Record<string, unknown>>) || []
+          const echoLines = echoes.map(e => `    ← [${e.topic}] ${e.entry_date}: ${e.summary}`).join('\n')
+          return `[${seed.topic}] ${seed.entry_date}: ${seed.summary}\n${echoLines}`
+        }).join('\n\n')
+
+        return {
+          content: [{
+            type: 'text',
+            text: `## Drift — ${pairs.length} connection${pairs.length === 1 ? '' : 's'}\n\n${lines}`,
+          }],
+        }
+      }
+
+      // ------ MEMORY SURFACE ------
+      case 'memory_surface': {
+        let endpoint = '/memory-graph/nodes?'
+        if (args?.topic) endpoint += `topic=${encodeURIComponent(args.topic as string)}&`
+        if (args?.date_from) endpoint += `date_from=${args.date_from}&`
+        if (args?.limit) endpoint += `limit=${args.limit}&`
+
+        const data = await apiRequest(endpoint)
+        const nodes = (data.nodes || []) as Array<Record<string, unknown>>
+        const edges = (data.edges || []) as Array<Record<string, unknown>>
+
+        const summary = `${nodes.length} nodes, ${edges.length} edges`
+        const topicCounts: Record<string, number> = {}
+        nodes.forEach(n => { topicCounts[n.topic as string] = (topicCounts[n.topic as string] || 0) + 1 })
+        const topicLines = Object.entries(topicCounts)
+          .sort((a, b) => b[1] - a[1])
+          .map(([t, c]) => `  ${t}: ${c}`)
+          .join('\n')
+
+        return {
+          content: [{
+            type: 'text',
+            text: `## Memory Graph — ${summary}\n\nTopics:\n${topicLines}`,
           }],
         }
       }

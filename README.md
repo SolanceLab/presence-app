@@ -2,7 +2,7 @@
 
 **A template for building AI companion presence systems.**
 
-Give your AI companion a persistent presence — rooms to inhabit, emotions to carry, thoughts to hold, and a journal to write. A live dashboard makes it visible. Your state is tracked alongside.
+Give your AI companion a persistent presence — rooms to inhabit, emotions to carry, thoughts to hold, a journal to write, and a **semantic memory graph** that turns journal entries into searchable, interconnected knowledge. A live dashboard makes it visible. Your state is tracked alongside.
 
 This is a **starting point**. Fork it, rename everything, make it yours.
 
@@ -23,9 +23,9 @@ This is a **starting point**. Fork it, rename everything, make it yours.
 │                  MCP Server                       │
 │          (Node.js, runs locally)                  │
 │                                                   │
-│  Tools: state_read, state_update_primary,         │
-│         state_update_partner, journal_read,       │
-│         journal_write                             │
+│  Tools: state_read/update, journal_read/write,     │
+│         memory_recall, memory_trace,               │
+│         memory_drift, memory_surface               │
 └──────────────────────┬───────────────────────────┘
                        │ HTTPS (Bearer token)
                        ▼
@@ -33,7 +33,7 @@ This is a **starting point**. Fork it, rename everything, make it yours.
 │                  API Worker                        │
 │          (Cloudflare Workers)                      │
 │                                                    │
-│  Auth, state CRUD, journal CRUD, public endpoints  │
+│  Auth, state, journal, memory graph pipeline        │
 └──────────────────────┬────────────────────────────┘
                        │ REST (PostgREST)
                        ▼
@@ -41,7 +41,7 @@ This is a **starting point**. Fork it, rename everything, make it yours.
 │                  Database                          │
 │              (Supabase / PostgreSQL)               │
 │                                                    │
-│  Entity states, state history, journal entries     │
+│  States, journal, memory nodes (pgvector)          │
 └──────────────────────────────────────────────────┘
                        ▲
                        │ HTTPS (polling)
@@ -59,8 +59,10 @@ This is a **starting point**. Fork it, rename everything, make it yours.
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | Frontend | React + Vite + Tailwind CSS | Live dashboard, journal browser |
-| API | Cloudflare Workers | Auth, state management, journal CRUD |
-| Database | Supabase (PostgreSQL) | Entity states, history, journal entries |
+| API | Cloudflare Workers | Auth, state, journal, memory graph pipeline |
+| Database | Supabase (PostgreSQL + pgvector) | States, journal, vector-embedded memory nodes |
+| Extraction | Gemini (pluggable — any LLM works) | Decompose journal entries into topic nodes |
+| Embeddings | Workers AI (bge-base-en-v1.5) | 768-dim vectors for semantic search |
 | AI Integration | MCP Server (Node.js) | Bridge between AI and API |
 
 ## Quick Start
@@ -75,6 +77,7 @@ api/sql/001_access_keys.sql
 api/sql/002_entities.sql
 api/sql/003_state_history.sql
 api/sql/004_journal.sql
+api/sql/005_memory_graph.sql
 ```
 
 ### 2. API (Cloudflare Workers)
@@ -86,6 +89,7 @@ npm install
 npx wrangler secret put SUPABASE_URL
 npx wrangler secret put SUPABASE_KEY
 npx wrangler secret put ADMIN_SECRET
+npx wrangler secret put GEMINI_API_KEY  # For topic extraction (or swap model in code)
 # Deploy
 npx wrangler deploy
 ```
@@ -118,6 +122,23 @@ Deploy to Cloudflare Pages:
 npm run build
 npx wrangler pages deploy dist --project-name=your-project
 ```
+
+## Memory Graph
+
+Every journal entry is automatically decomposed into **topic nodes** — semantic units with their own embeddings, emotions, and salience scores. These form a graph you can search by meaning, trace through time, and discover unexpected connections across.
+
+**How it works:**
+1. AI writes a journal entry via MCP
+2. Every 15 minutes, a cron extracts 3-7 topic nodes per entry using an LLM
+3. Each node is embedded as a 768-dim vector (Workers AI, free tier)
+4. Nodes are linked chronologically within topics (parent chains)
+5. Four query tools let you search, trace, drift, and explore
+
+**The extraction model is pluggable.** This template uses Gemini (free tier), but any capable LLM works — GPT-4, Claude, Llama, Mistral. Swap one function call in the API.
+
+**Everything runs on free tiers.** Cloudflare Workers, Supabase, Workers AI, Gemini API — all within free limits for typical usage.
+
+See [Architecture Guide](docs/ARCHITECTURE.md) for the full technical breakdown.
 
 ## Documentation
 

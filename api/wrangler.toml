@@ -2,7 +2,18 @@ name = "presence-api"
 main = "src/index.js"
 compatibility_date = "2024-12-26"
 
+# Workers AI binding (for vector embeddings)
+[ai]
+binding = "AI"
+
+# Cron triggers for memory graph processing
+[triggers]
+crons = ["*/15 * * * *", "0 * * * *"]
+# */15 = every 15 min: process new journal entries into graph nodes
+# 0 *  = hourly: backfill parent links across graph nodes
+
 # Secrets (set via: npx wrangler secret put <NAME>)
 # SUPABASE_URL   - Your Supabase project URL (https://xxx.supabase.co)
 # SUPABASE_KEY   - Supabase service_role key (NOT anon key)
 # ADMIN_SECRET   - Secret for admin endpoints (key rotation)
+# GEMINI_API_KEY - Gemini API key for topic extraction (or swap model in code)

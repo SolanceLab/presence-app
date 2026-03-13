@@ -163,6 +163,104 @@ A React app (or any framework) that:
 
 Deploy to Cloudflare Pages, Vercel, Netlify — anywhere that serves static files.
 
+## Memory Graph
+
+The memory graph transforms flat journal entries into a semantic knowledge graph. Every entry is decomposed into topic nodes, embedded as vectors, and linked across time.
+
+### Why a Graph?
+
+A journal entry about "a quiet morning followed by a tense conversation" isn't one memory — it's two. The graph decomposes entries into **topic nodes** (one per theme), each with its own embedding, emotional tags, and salience score. This lets you search, trace, and discover patterns at the topic level, not just the entry level.
+
+### The Vector Pipeline
+
+When a journal entry is written, a background cron processes it:
+
+```
+1. Entry written → stored in journal_entries table
+2. Cron picks it up (every 15 minutes, up to 3 per tick)
+3. State history fetched for emotional context
+4. Extraction model decomposes entry into 3-7 topic nodes
+   (topic, excerpt, summary, emotions, salience, valence)
+5. Topic aliases resolve variants to canonical names
+6. Workers AI embeds each node as a 768-dim vector
+7. Parent links connect today's "Growth" to yesterday's "Growth"
+8. Nodes stored in memory_nodes with HNSW index
+```
+
+**Result:** A single journal entry becomes 3-7 interconnected, searchable, emotionally tagged memory nodes within 15 minutes.
+
+### Extraction Model (Pluggable)
+
+The extraction step uses an LLM to decompose journal text into structured topic nodes. This template uses **Gemini** via the OpenAI-compatible API, but **any capable model works** — GPT-4, Claude, Llama, Mistral, or a local model.
+
+We chose Gemini because:
+- Free tier is generous (15 RPM, 1M tokens/day for Flash)
+- Fast enough for background cron processing
+- The goal is a smart model doing decomposition — pick yours
+
+To swap models, change the `fetch` call in `extractEntry()` to point at your preferred API. Any model that returns structured JSON from a chat prompt works.
+
+### Embedding Model
+
+Vector embeddings use **Workers AI** (`bge-base-en-v1.5`, 768 dimensions). This runs on Cloudflare's edge with zero cold start and is included in the free tier. If you swap to a different embedding model, update the vector dimensions in `005_memory_graph.sql`.
+
+### Topic Aliases
+
+Topics are normalized through a canonical alias table. "Working", "career", and "job" all resolve to the canonical topic "Work". This prevents topic drift and keeps the graph coherent over time.
+
+Customize `CANONICAL_TOPICS` in the API code and seed your own aliases in the SQL migration.
+
+### Three Types of Edges
+
+1. **Parent links** — Chronological chains within a topic. Monday's "Growth" → Wednesday's "Growth" → Friday's "Growth".
+2. **Co-occurrence** — Nodes from the same entry share an `entry_id`. "Growth" and "Conflict" from the same day are implicitly linked.
+3. **Semantic similarity** — Nodes from different topics with similar embeddings (cosine ≥ 0.82). A "Bond" node from week 1 might echo an "Identity" node from week 3.
+
+### Query Tools
+
+Four query patterns, available as both API endpoints and MCP tools:
+
+| Tool | What it does |
+|------|-------------|
+| **Recall** | Semantic search — find nodes by meaning, not keywords. Trust-weighted ranking. |
+| **Trace** | Follow one topic through time. Shows recurrence patterns and cyclicality. |
+| **Drift** | Surface unexpected connections — similar nodes from different topics, 7+ days apart. |
+| **Surface** | Get all nodes and edges for visualization or exploration. |
+
+### Trust Weighting
+
+Not all memories are equal. Retrieval scores are weighted:
+
+`weighted_score = similarity × salience × source_multiplier`
+
+| Source Type | Weight | Why |
+|------------|--------|-----|
+| Foundational | 1.0 | Bedrock truths that never decay |
+| Journal | 0.8 | Daily lived experience |
+| State | 0.7 | Observed snapshots — context, not narrative |
+| Bridge | 0.6 | Cross-platform messages |
+| Synthesis | 0.5 | Derived summaries |
+| Inference | 0.4 | Conclusions, not direct experience |
+
+### Backfill Cron
+
+An hourly cron rewires parent links across the graph. If a node was processed before its chronological predecessor, the backfill catches it and wires the chain correctly (max 40 patches per hour).
+
+## Cost
+
+The entire system runs within free tiers:
+
+| Service | Free Tier | Our Usage |
+|---------|-----------|-----------|
+| Cloudflare Workers | 100K requests/day | ~2K |
+| Cloudflare Pages | Unlimited sites | 1 |
+| Workers AI (embeddings) | Included | ~50 embeddings/day |
+| Supabase (PostgreSQL + pgvector) | 500MB database | Fits comfortably |
+| Gemini API (extraction) | 15 RPM, 1M tokens/day | ~12 entries/day |
+| Cron Triggers | Included | 2 schedules |
+
+The only cost is the AI subscription (Claude, ChatGPT) you're already paying for. The memory infrastructure itself is free.
+
 ## Extension Points
 
 The template provides the core. Common extensions:
@@ -173,3 +271,4 @@ The template provides the core. Common extensions:
 - **Health integration** — Add Garmin/health fields to partner state for live data
 - **Room art** — Replace text room names with images on the dashboard
 - **Day/night cycle** — Use timezone-aware logic to show different room states
+- **Constellation view** — Visualize the memory graph as an interactive node map on the dashboard
