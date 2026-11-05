@@ -14,10 +14,24 @@ sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import bump  # noqa: E402
 
 
-def entry(name, repo, ref, path="plugin", owner="SolanceLab", **extra):
+TAGS = {
+    "antechamber": {"v1.0.0": "a" * 40, "v1.1.0": "b" * 40, "v1.1.0-rc1": "c" * 40, "v2": "d" * 40, "main": "e" * 40, "v0.9.0": "f" * 40},
+    "scriptorium": {"v1.0.0": "1" * 40},
+}
+
+
+def h(c):
+    """A fake 40-hex commit sha."""
+    return c * 40
+
+
+def entry(name, repo, ref, path="plugin", owner="SolanceLab", sha="auto", **extra):
     src = {"source": "git-subdir", "url": "https://github.com/%s/%s.git" % (owner, repo), "path": path}
     if ref:
         src["ref"] = ref
+        sha = TAGS.get(repo, {}).get(ref) if sha == "auto" else sha  # pinned to the tag's commit by default
+        if sha:
+            src["sha"] = sha
     return dict(name=name, source=src, **extra)
 
 
@@ -33,15 +47,14 @@ def docs():
     }
 
 
-TAGS = {"antechamber": ["v1.0.0", "v1.1.0", "v1.1.0-rc1", "v2", "main", "v0.9.0"], "scriptorium": ["v1.0.0"]}
-
-
 def fetch(repo):
-    return TAGS[repo]
+    return list(TAGS[repo].items())
 
 
 class Pick(unittest.TestCase):
     def test_highest_semver_only(self):
+        self.assertEqual(bump.sha_of([("v1", "x")], "v1"), "x")
+        self.assertIsNone(bump.sha_of([("v1", "x")], "v2"))
         self.assertEqual(bump.latest_tag(["v1.9.0", "v1.10.0", "v1.10.0-beta", "1.11.0", "latest"]), "v1.10.0")
         self.assertIsNone(bump.latest_tag(["main", "v1"]))
 
@@ -58,6 +71,45 @@ class Plan(unittest.TestCase):
         self.assertEqual(new["codex"]["plugins"][0]["source"]["ref"], "v1.1.0")
         self.assertEqual(new["claude"]["plugins"][0]["version"], "1.1.0")
         self.assertEqual(new["claude"]["metadata"]["version"], "1.0.1")
+
+    def test_bump_writes_new_sha_into_claude_and_codex(self):
+        _, (new, _) = self.run_plan()
+        self.assertEqual(new["claude"]["plugins"][0]["source"]["sha"], "b" * 40)
+        self.assertEqual(new["codex"]["plugins"][0]["source"]["sha"], "b" * 40)
+
+    def test_moved_tag_is_tampered(self):
+        d = docs()
+        d["claude"]["plugins"][1]["source"]["sha"] = "9" * 40
+        ch = bump.plan_bumps(d, "", fetch)
+        c = [x for x in ch if x["status"] == "tampered"][0]
+        self.assertEqual((c["name"], c["was"], c["now"]), ("scriptorium", "9" * 40, "1" * 40))
+
+    def test_vanished_tag_is_tampered(self):
+        gone = lambda repo: [(n, s) for n, s in fetch(repo) if n != "v1.0.0"]
+        ch = bump.plan_bumps(docs(), "", gone)
+        self.assertTrue(any(c["status"] == "tampered" and c["now"] is None for c in ch))
+
+    def test_legacy_entry_without_sha_is_needs_pin_and_not_moved(self):
+        d = docs()
+        del d["claude"]["plugins"][0]["source"]["sha"]
+        ch, (new, _) = self.run_plan(d)
+        c = [x for x in ch if x["where"] == "claude" and x["name"] == "antechamber"][0]
+        self.assertEqual((c["status"], c["pin"]), ("needs-pin", "a" * 40))
+        self.assertEqual(new["claude"]["plugins"][0]["source"]["ref"], "v1.0.0")
+
+    def test_makefile_pin_checked_against_marketplace_sha(self):
+        make = "ANTECHAMBER = v1.0.0\n"
+        ch = bump.plan_bumps(docs(), make, fetch)
+        self.assertEqual([c for c in ch if c["where"] == "makefile"][0]["status"], "bumped")
+        self.assertNotIn("unpinned", [c for c in ch if c["where"] == "makefile"][0])
+        d = docs()
+        d["claude"]["plugins"][0]["source"]["sha"] = "9" * 40
+        ch = bump.plan_bumps(d, make, fetch)
+        self.assertTrue(any(c["where"] == "makefile" and c["status"] == "tampered" for c in ch))
+
+    def test_makefile_pin_without_marketplace_entry_is_unpinned(self):
+        ch = bump.plan_bumps({}, "ANTECHAMBER = v1.0.0\n", fetch)
+        self.assertTrue(ch[0]["unpinned"] and ch[0]["status"] == "bumped")
 
     def test_no_move_leaves_metadata_alone(self):
         d = docs()
@@ -139,12 +191,40 @@ class Main(unittest.TestCase):
         def flaky(repo):
             if repo == "scriptorium":
                 raise OSError("rate limited")
-            return TAGS[repo]
+            return fetch(repo)
 
         before = self.snapshot()
         for argv in ([], ["--check"], ["--dry-run"]):
             self.assertNotEqual(bump.main(argv, self.tmp, flaky), 0)
         self.assertEqual(self.snapshot(), before)
+
+    def test_tampered_exits_2_and_writes_nothing_though_another_would_bump(self):
+        d = docs()
+        d["claude"]["plugins"][1]["source"]["sha"] = "9" * 40  # scriptorium moved; antechamber would bump
+        with open(os.path.join(self.tmp, *bump.STORES["claude"]), "w", encoding="utf-8") as fh:
+            json.dump(d["claude"], fh, indent=2)
+        before = self.snapshot()
+        for argv in ([], ["--check"], ["--dry-run"], ["--pin-shas"]):
+            self.assertEqual(bump.main(argv, self.tmp, fetch), 2)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_pin_shas_records_current_sha_without_moving(self):
+        d = docs()
+        for key in d:
+            for p in d[key]["plugins"]:
+                p["source"].pop("sha", None)
+        for k, parts in bump.STORES.items():
+            with open(os.path.join(self.tmp, *parts), "w", encoding="utf-8") as fh:
+                json.dump(d[k], fh, indent=2)
+        self.assertEqual(bump.main([], self.tmp, fetch), 0)  # legacy: not moved
+        self.assertNotIn("v1.1.0", self.snapshot()[0])
+        self.assertEqual(bump.main(["--pin-shas"], self.tmp, fetch), 0)
+        with open(os.path.join(self.tmp, *bump.STORES["claude"]), encoding="utf-8") as fh:
+            doc = json.load(fh)
+        self.assertEqual(doc["plugins"][0]["source"]["sha"], "a" * 40)
+        self.assertEqual(doc["plugins"][0]["source"]["ref"], "v1.0.0")
+        self.assertNotIn("sha", doc["plugins"][2]["source"])
+        self.assertEqual(bump.main(["--check"], self.tmp, fetch), 1)
 
 
 if __name__ == "__main__":

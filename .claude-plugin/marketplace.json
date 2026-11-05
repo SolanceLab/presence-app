@@ -18,7 +18,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/scriptorium.git",
         "path": "plugin",
-        "ref": "v1.0.0"
+        "ref": "v1.0.0",
+        "sha": "1a1527b7896f9128a00c57789713048954729b36"
       }
     },
     {
@@ -31,7 +32,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/antechamber.git",
         "path": "plugin",
-        "ref": "v1.1.0"
+        "ref": "v1.1.0",
+        "sha": "0ff02dac09c26812043ef5f9bbd900f7d74169d6"
       }
     }
   ]
