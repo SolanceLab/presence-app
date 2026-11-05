@@ -2,7 +2,7 @@
 
 ## 2.1.0
 
-The set keeps itself current: once a day a job moves each room's pin (in the Makefile and the plugin list) to that room's newest release, runs the tests, and keeps the change only when they pass (`make bump`, `make bump-check`). The README no longer names fixed versions. Every House of Solance plugin is also listed in the SolanceLab store.
+The set keeps itself current: once a day a job moves each room's pin (in the Makefile and the plugin list) to that room's newest release, runs the tests, and keeps the change only when they pass (`make bump`, `make bump-check`). Each pin records its release's exact commit; if a room's tag ever points somewhere else, the job refuses to move anything. The README no longer names fixed versions. Every House of Solance plugin is also listed in the SolanceLab store.
 
 ## 2.0.2
 
