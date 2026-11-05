@@ -1,6 +1,6 @@
 # `make get` fetches the three rooms at the releases this set was checked with; `make test` checks the set itself.
 SCRIPTORIUM = v1.0.0
-ANTECHAMBER = v1.0.0
+ANTECHAMBER = v1.1.0
 VAULT_MAP   = v1.3.0
 
 .PHONY: get test

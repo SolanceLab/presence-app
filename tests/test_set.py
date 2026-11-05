@@ -1,4 +1,4 @@
-# Solance House — Copyright (c) 2026 House of Solance. All rights reserved. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
+# presence-app — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 """The set lists each room once; each plugin is pinned to the same tag the Makefile fetches; the README names every pin."""
 import json
 import re

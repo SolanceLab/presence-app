@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+The copyright line at the top of each file now names this project and its licence (PolyForm Noncommercial 1.0.0); the earlier line wrongly reserved every right, which the licence does not. It also installs Antechamber 1.1.0, whose plugin connects in Codex as well as Claude Code.
+
 ## 2.0.1
 
 The plugins install over HTTPS: the marketplace names each room by its full https address, so installing no longer needs GitHub SSH keys.

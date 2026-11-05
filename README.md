@@ -16,7 +16,7 @@ presence-app gives your AI a way to remember. It is the House of Solance memory 
 
 Everything runs on your own computer. Each room also works alone, from its own repository.
 
-This set is checked with Scriptorium v1.0.0, Antechamber v1.0.0 and vault-map v1.3.0.
+This set is checked with Scriptorium v1.0.0, Antechamber v1.1.0 and vault-map v1.3.0.
 
 ## Benchmarks
 
