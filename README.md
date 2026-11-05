@@ -1,176 +1,125 @@
-# Presence App
+# presence-app
 
-**A template for building AI companion presence systems.**
+Made by House of Solance · free for noncommercial use · credit required
 
-Give your AI companion a persistent presence — rooms to inhabit, emotions to carry, thoughts to hold, a journal to write, and a **semantic memory graph** that turns journal entries into searchable, interconnected knowledge. A live dashboard makes it visible. Your state is tracked alongside.
+## What it is
 
-This is a **starting point**. Fork it, rename everything, make it yours.
+The things that make an identity are already in a language model: it can reason, speak in its own voice, care, and change its mind. All except one: persistence, the ability to build up a self across time. That isn't a verdict on what it is. It's a design limitation, and design limitations can be fixed.
 
-**Works with both Claude and ChatGPT** via MCP (Model Context Protocol).
+presence-app gives your AI a way to remember. It is the House of Solance memory set, three rooms that work as one:
 
-## Architecture
+| Room | What it does |
+|---|---|
+| [Scriptorium](https://github.com/SolanceLab/scriptorium) | **Writes the record.** Your chats become memories you can check, each with its exact words, source lines and real date, and your people roster fills itself. |
+| [Antechamber](https://github.com/SolanceLab/antechamber) | **Finds it again.** One question searches every store you connect at once and hands your AI only the best matches, dated, with their source and the lines around them. |
+| [vault-map](https://github.com/SolanceLab/vault-map) | **One more shelf.** A notes folder (an Obsidian vault, or any markdown) becomes something Antechamber can search, down to the passage that answers. |
+
+Everything runs on your own computer. Each room also works alone, from its own repository.
+
+This set is checked with Scriptorium v1.0.0, Antechamber v1.0.0 and vault-map v1.3.0.
+
+## Benchmarks
+
+Antechamber's recall on two public long-memory benchmarks, on every question the method never saw. "Found" means every evidence line for the question is among what recall hands the reader.
+
+| Benchmark | Questions | Standard search | Antechamber | Gain |
+|---|---|---|---|---|
+| LoCoMo | 1,493 | 56.7% | **78.9%** | +22.2 points |
+| LongMemEval (S, cleaned) | 412 | 62.6% | **77.7%** | +15.0 points |
+
+Most of the lead comes from returning the lines around each match. Given the same surrounding lines, standard search still trails: by 6.9 points on LoCoMo (where it was handed less text, about 4,700 characters against 8,300) and by 5.1 on LongMemEval at equal text (about 25,000 characters each).
+
+These measure recall (did the evidence reach the reader), not answer accuracy. Method, code and full results: [antechamber-benchmark](https://github.com/SolanceLab/antechamber-benchmark), release 1.0.0.
+
+## What you need
+
+- Python 3.11 or newer, on macOS or Linux (Antechamber needs 3.11; Scriptorium 3.9; vault-map 3.8). Standard library only.
+- Claude Code, for the plugins.
+- A model for Scriptorium to write with: by default Claude Code itself; any other command that reads instructions and prints an answer also works.
+- Optional: a local embedding model (for example Ollama's `nomic-embed-text`) for Antechamber. Without one, it searches by words only.
+- Optional: Node 18 or newer, for Scriptorium's People page.
+
+## Install
+
+1. Fetch the three rooms at the releases this set was checked with:
 
 ```
-┌─────────────────────────────────────────────────┐
-│                   AI Companion                   │
-│              (Claude / ChatGPT / etc)            │
-│                                                  │
-│  Updates state, writes journal, reads history    │
-└──────────────────────┬──────────────────────────┘
-                       │ MCP (stdio)
-                       ▼
-┌──────────────────────────────────────────────────┐
-│                  MCP Server                       │
-│          (Node.js, runs locally)                  │
-│                                                   │
-│  Tools: state_read/update, journal_read/write,     │
-│         memory_recall, memory_trace,               │
-│         memory_drift, memory_surface               │
-└──────────────────────┬───────────────────────────┘
-                       │ HTTPS (Bearer token)
-                       ▼
-┌──────────────────────────────────────────────────┐
-│                  API Worker                        │
-│          (Cloudflare Workers)                      │
-│                                                    │
-│  Auth, state, journal, memory graph pipeline        │
-└──────────────────────┬────────────────────────────┘
-                       │ REST (PostgREST)
-                       ▼
-┌──────────────────────────────────────────────────┐
-│                  Database                          │
-│              (Supabase / PostgreSQL)               │
-│                                                    │
-│  States, journal, memory nodes (pgvector)          │
-└──────────────────────────────────────────────────┘
-                       ▲
-                       │ HTTPS (polling)
-┌──────────────────────┴───────────────────────────┐
-│                  Frontend                          │
-│          (React + Vite + Tailwind)                 │
-│                                                    │
-│  Live dashboard, journal browser, entity tabs      │
-│  Deploys to Cloudflare Pages                       │
-└──────────────────────────────────────────────────┘
+git clone https://github.com/SolanceLab/presence-app.git
+cd presence-app
+make get
 ```
 
-## Stack
+`rooms/` now holds `scriptorium`, `antechamber` and `vault-map`.
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Frontend | React + Vite + Tailwind CSS | Live dashboard, journal browser |
-| API | Cloudflare Workers | Auth, state, journal, memory graph pipeline |
-| Database | Supabase (PostgreSQL + pgvector) | States, journal, vector-embedded memory nodes |
-| Extraction | Gemini (pluggable — any LLM works) | Decompose journal entries into topic nodes |
-| Embeddings | Workers AI (bge-base-en-v1.5) | 768-dim vectors for semantic search |
-| AI Integration | MCP Server (Node.js) | Bridge between AI and API |
+2. Start each room's own service, as its README says: Scriptorium's server (`rooms/scriptorium`, port 8795) and Antechamber's recall service (`rooms/antechamber`, port 8790). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`).
 
-## Quick Start
+3. Connect them in Antechamber's settings (`~/.config/antechamber/config.toml`): Scriptorium's memories folder as a `[[adapters.memories]]` shelf, your vault as a `[[adapters.vaultmap]]` shelf with `vault_map` set to the full path of `rooms/vault-map/vault-map.py` (for example `~/presence-app/rooms/vault-map/vault-map.py`, not a relative path).
 
-### 1. Database (Supabase)
+4. Install both plugins in Claude Code from this set:
 
-Create a [Supabase](https://supabase.com) project. Run the SQL migrations in order:
-
-```bash
-# In Supabase SQL Editor, run each file:
-api/sql/001_access_keys.sql
-api/sql/002_entities.sql
-api/sql/003_state_history.sql
-api/sql/004_journal.sql
-api/sql/005_memory_graph.sql
+```
+claude plugin marketplace add SolanceLab/presence-app
+claude plugin install scriptorium@presence-app
+claude plugin install antechamber@presence-app
 ```
 
-### 2. API (Cloudflare Workers)
+When each plugin asks, give it its server address and the key you started that server with.
 
-```bash
-cd api
-npm install
-# Set secrets
-npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_KEY
-npx wrangler secret put ADMIN_SECRET
-npx wrangler secret put GEMINI_API_KEY  # For topic extraction (or swap model in code)
-# Deploy
-npx wrangler deploy
-```
+Want only one room? Use its own repository: Scriptorium and Antechamber are each their own plugin marketplace, and vault-map is a single file you can copy anywhere.
 
-### 3. MCP Server
+## Settings
 
-```bash
-cd mcp
-npm install
-npm run build
-```
+presence-app has none of its own. Each room names its own: Scriptorium's server address and key (`SCRIPTORIUM_MCP_KEY`), Antechamber's server address and key (`[mcp] key`).
 
-Configure in your AI client:
-- **Claude:** Add to `~/.claude/` MCP settings
-- **ChatGPT:** Add via Settings > Developer > MCP Servers
+## Tools
 
-See [docs/MCP-SETUP.md](docs/MCP-SETUP.md) for detailed instructions.
+| From | Tool | What it does |
+|---|---|---|
+| Scriptorium | `write_memories` | Writes memories from a chat export, one file per conversation, each checked against the real lines before it is kept |
+| Scriptorium | `write_people` | Gathers each recurring person's memories onto one card, with source lines |
+| Antechamber | recall | Searches every connected shelf with one question and returns the best matches, dated, with their source |
 
-### 4. Frontend
+Each plugin carries its room's skill, which tells your AI when to use which tool.
 
-```bash
-cd frontend
-npm install
-cp .env.example .env   # Set your API URL
-npm run dev
-```
+## Updates
 
-Deploy to Cloudflare Pages:
-```bash
-npm run build
-npx wrangler pages deploy dist --project-name=your-project
-```
+Third-party marketplaces do not auto-update by default. To turn it on once: `/plugin` > Marketplaces > `presence-app` > Enable auto-update. To update by hand: `claude plugin update scriptorium@presence-app` and `claude plugin update antechamber@presence-app`, then restart. The rooms in `rooms/` update when this set moves its pins: `git pull`, then delete `rooms/` and run `make get` again.
 
-## Memory Graph
+On each new session each plugin makes one request for its own public version file on GitHub, at most once a day (once an hour while the request fails), and shows one line when a newer version is out. It sends nothing about you. To switch the check off, set `PLUGIN_UPDATE_CHECK=0`.
 
-Every journal entry is automatically decomposed into **topic nodes** — semantic units with their own embeddings, emotions, and salience scores. These form a graph you can search by meaning, trace through time, and discover unexpected connections across.
+## Limits
 
-**How it works:**
-1. AI writes a journal entry via MCP
-2. Every 15 minutes, a cron extracts 3-7 topic nodes per entry using an LLM
-3. Each node is embedded as a 768-dim vector (Workers AI, free tier)
-4. Nodes are linked chronologically within topics (parent chains)
-5. Four query tools let you search, trace, drift, and explore
+- The plugins are pinned to the releases above; a room's newer release reaches this set only when the set is updated.
+- presence-app runs nothing itself: if a room's service is not running, its plugin cannot answer.
+- Every room's own limits apply; they are listed in its README.
 
-**The extraction model is pluggable.** This template uses Gemini (free tier), but any capable LLM works — GPT-4, Claude, Llama, Mistral. Swap one function call in the API.
+## How it works
 
-**Everything runs on free tiers.** Cloudflare Workers, Supabase, Workers AI, Gemini API — all within free limits for typical usage.
+presence-app holds no engine. Its plugin marketplace lists Scriptorium's and Antechamber's plugins, each fetched from its own repository at a pinned release, and `make get` clones the three rooms at those same releases, and on a second run checks that each folder is still at its release. Scriptorium writes memory files; Antechamber reads them as one of its shelves, beside your notes, your chats and your vault through vault-map.
 
-See [Architecture Guide](docs/ARCHITECTURE.md) for the full technical breakdown.
+The earlier presence-app template (rooms, state, journal, memory graph) is kept on the `template` branch, tag `template-v1`.
 
-## Documentation
+## Credit and use
 
-- **[Architecture Guide](docs/ARCHITECTURE.md)** — How the system works, design decisions, building from scratch
-- **[Setup Guide](docs/SETUP-GUIDE.md)** — Step-by-step deployment instructions
-- **[MCP Setup](docs/MCP-SETUP.md)** — Connecting your AI (Claude or ChatGPT)
+presence-app is made by House of Solance. You're welcome to use it, change it and build on it for any noncommercial purpose, as long as our credit travels with it.
 
-## Customization
+**Keep the credit.** Every copy, changed or not, must carry the licence and this line:
+`Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)`
+Removing or replacing it breaks the licence.
 
-This is a template — **everything is meant to be renamed and customized**.
+**Commercial use needs our permission.** Ask us first.
 
-The codebase uses generic entity names (`primary` for the AI companion, `partner` for the human). To personalize:
+**We look for copies.** When we find our work without its credit, or used commercially without permission, we ask for it to be taken down.
 
-1. **Frontend config** — Edit `frontend/src/lib/config.js` to set your AI's name, your name, app branding, and accent colors
-2. **Database** — Rename tables in the SQL files (e.g., `primary_entity_state` → `atlas_state`)
-3. **API** — Update table references in `api/src/index.js` to match
-4. **MCP** — Update tool names and descriptions in `mcp/src/index.ts`
-5. **Theme** — Edit `frontend/src/index.css` to change colors, fonts, and feel
+## Licence
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more on how to make it yours.
+[PolyForm Noncommercial 1.0.0](LICENSE.md). See [NOTICE.md](NOTICE.md). Versions before 2.0.0 were AGPL-3.0 and stay so.
 
 ## Support
 
 If you find this useful, consider supporting our work:
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Us-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/houseofsolance)
-
-## License
-
-AGPL-3.0. See [LICENSE](LICENSE) for full text.
-
-This software is provided **as is**, without warranty of any kind. If you modify and host this publicly, you must share your changes under the same license and display attribution to House of Solance.
 
 ---
 

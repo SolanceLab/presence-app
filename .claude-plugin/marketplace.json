@@ -1,0 +1,22 @@
+{
+  "name": "presence-app",
+  "owner": { "name": "House of Solance" },
+  "metadata": {
+    "description": "presence-app: give your AI a way to remember. Scriptorium writes the record; Antechamber finds it again.",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "scriptorium",
+      "description": "Turns your chat history into memories you can check, each with its exact words, source lines and real date; keeps a people roster that fills itself. Talks to your own Scriptorium server.",
+      "author": { "name": "House of Solance" },
+      "source": { "source": "git-subdir", "url": "SolanceLab/scriptorium", "path": "plugin", "ref": "v1.0.0" }
+    },
+    {
+      "name": "antechamber",
+      "description": "One question searches every store you connect (notes, chats, memories, a vault) and returns only the best matches. Talks to your own Antechamber server.",
+      "author": { "name": "House of Solance" },
+      "source": { "source": "git-subdir", "url": "SolanceLab/antechamber", "path": "plugin", "ref": "v1.0.0" }
+    }
+  ]
+}
