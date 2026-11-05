@@ -34,10 +34,10 @@ class SetTest(unittest.TestCase):
             self.assertIn(f"{room}:$({var})", make)
         self.assertIn("--branch $$tag https://github.com/SolanceLab/$$room.git", make)
 
-    def test_readme_names_every_pin(self):
+    def test_readme_names_no_fixed_version(self):
         readme = (ROOT / "README.md").read_text()
-        for room, var in (("Scriptorium", "SCRIPTORIUM"), ("Antechamber", "ANTECHAMBER"), ("vault-map", "VAULT_MAP")):
-            self.assertIn(f"{room} {self.make[var]}", readme)
+        for room in ("Scriptorium", "Antechamber", "vault-map"):
+            self.assertIsNone(re.search(room + r" v\d+\.\d+\.\d+", readme), room)
 
 
 if __name__ == "__main__":

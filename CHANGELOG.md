@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+The set keeps itself current: once a day a job moves each room's pin (in the Makefile and the plugin list) to that room's newest release, runs the tests, and keeps the change only when they pass (`make bump`, `make bump-check`). The README no longer names fixed versions. Every House of Solance plugin is also listed in the SolanceLab store.
+
 ## 2.0.2
 
 The copyright line at the top of each file now names this project and its licence (PolyForm Noncommercial 1.0.0); the earlier line wrongly reserved every right, which the licence does not. It also installs Antechamber 1.1.0, whose plugin connects in Codex as well as Claude Code.

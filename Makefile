@@ -3,7 +3,7 @@ SCRIPTORIUM = v1.0.0
 ANTECHAMBER = v1.1.0
 VAULT_MAP   = v1.3.0
 
-.PHONY: get test
+.PHONY: get test bump bump-check
 get:
 	@mkdir -p rooms
 	@for pair in scriptorium:$(SCRIPTORIUM) antechamber:$(ANTECHAMBER) vault-map:$(VAULT_MAP); do \
@@ -20,3 +20,7 @@ get:
 
 test:
 	python3 -m unittest discover -s tests -q
+bump:
+	python3 scripts/bump.py
+bump-check:
+	python3 scripts/bump.py --check

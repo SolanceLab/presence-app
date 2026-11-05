@@ -18,7 +18,7 @@ Everything runs on your own computer. Each room also works alone, from its own r
 
 Every House of Solance plugin is also listed in the SolanceLab store: [github.com/SolanceLab/plugins](https://github.com/SolanceLab/plugins).
 
-This set is checked with Scriptorium v1.0.0, Antechamber v1.1.0 and vault-map v1.3.0.
+The exact release of each room is pinned in the `Makefile` and `.claude-plugin/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
 
 ## Benchmarks
 
@@ -91,7 +91,7 @@ On each new session each plugin makes one request for its own public version fil
 
 ## Limits
 
-- The plugins are pinned to the releases above; a room's newer release reaches this set only when the set is updated.
+- The plugins are pinned to released versions; a room's newer release reaches this set the next day, once the tests pass.
 - presence-app runs nothing itself: if a room's service is not running, its plugin cannot answer.
 - Every room's own limits apply; they are listed in its README.
 
