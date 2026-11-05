@@ -24,7 +24,7 @@ class SetTest(unittest.TestCase):
         for p in self.market["plugins"]:
             src = p["source"]
             self.assertEqual(src["source"], "git-subdir")
-            self.assertEqual(src["url"], "SolanceLab/" + p["name"])
+            self.assertEqual(src["url"], f"https://github.com/SolanceLab/{p['name']}.git")
             self.assertEqual(src["path"], "plugin")
             self.assertEqual(src["ref"], self.make[p["name"].upper()])
 
