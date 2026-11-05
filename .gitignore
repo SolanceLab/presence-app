@@ -1,1 +1,3 @@
 rooms/
+__pycache__/
+*.pyc
