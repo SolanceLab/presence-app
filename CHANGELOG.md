@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+Works in Codex too: the set now has a Codex list (`.agents/plugins/marketplace.json`) beside the Claude Code one. Pins moved to Antechamber v1.2.0 (it starts itself in Claude Code and Codex, so there is no service to start for it), Scriptorium v1.1.1 (Codex connection) and vault-map v1.4.0. The daily job still moves a pin only to a published GitHub Release. The README steps follow.
+
+One install: `presence-app` is now a plugin of its own, in Claude Code (it depends on Antechamber, Scriptorium and vault-map, so installing it installs all three) and in Codex (the same `plugin/` folder carries the three rooms' skills in `codex-skills/` and the connections in `codex.mcp.json`, because Codex plugins cannot depend on each other). `tests/stranger_bundle.py` installs it from a local store into empty Claude Code and Codex homes and checks that all three rooms answer. The Codex copy of Antechamber starts from the pinned commit, and the daily job refreshes the bundle (`make get bundle`) before it runs the tests.
+
 ## 2.1.1
 
 Pins moved to the newest releases: scriptorium v1.0.0 → v1.1.0, vault-map v1.3.0 → v1.3.1.

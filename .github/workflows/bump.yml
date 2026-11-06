@@ -17,6 +17,8 @@ jobs:
         run: python3 scripts/bump.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch the rooms at the new pins and refresh the Codex bundle
+        run: make get bundle
       - name: Run the store tests
         run: make test
       - name: Commit only when something moved

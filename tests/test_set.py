@@ -28,6 +28,44 @@ class SetTest(unittest.TestCase):
             self.assertEqual(src["path"], "plugin")
             self.assertEqual(src["ref"], self.make[p["name"].upper()])
 
+    def test_codex_list_matches_the_claude_list(self):
+        codex = json.loads((ROOT / ".agents" / "plugins" / "marketplace.json").read_text())
+        claude = {p["name"]: p["source"] for p in self.market["plugins"]}
+        self.assertEqual(sorted(p["name"] for p in codex["plugins"]), sorted(claude))
+        for p in codex["plugins"]:
+            src, want = p["source"], claude[p["name"]]
+            self.assertEqual((src["url"], src["ref"], src["sha"]), (want["url"], want["ref"], want["sha"]))
+            self.assertEqual(p["policy"]["installation"], "AVAILABLE")
+
+    def test_claude_bundle_depends_on_the_three_rooms(self):
+        plugin = json.loads((ROOT / "plugin" / ".claude-plugin" / "plugin.json").read_text())
+        self.assertEqual(plugin["name"], "presence-app")
+        self.assertEqual(plugin["version"], self.market["metadata"]["version"])
+        self.assertEqual(sorted(plugin["dependencies"]), ["antechamber", "scriptorium", "vault-map"])
+
+    def test_codex_bundle_is_one_plugin_with_all_three_rooms(self):
+        plugin = json.loads((ROOT / "plugin" / ".codex-plugin" / "plugin.json").read_text())
+        self.assertEqual(plugin["name"], "presence-app")
+        self.assertEqual(plugin["version"], self.market["metadata"]["version"])
+        skills = sorted(p.parent.name for p in (ROOT / "plugin" / "codex-skills").glob("*/SKILL.md"))
+        self.assertEqual(skills, ["antechamber", "presence-app", "scriptorium", "vault-map"])
+        servers = json.loads((ROOT / "plugin" / plugin["mcpServers"]).read_text())["mcpServers"]
+        self.assertEqual(sorted(servers), ["antechamber", "scriptorium"])
+        self.assertIn("@" + self.make["ANTECHAMBER_SHA"], " ".join(servers["antechamber"]["args"]))
+        self.assertEqual(servers["scriptorium"]["bearer_token_env_var"], "SCRIPTORIUM_MCP_KEY")
+        self.assertNotIn("headers", servers["scriptorium"])
+
+    def test_codex_bundle_skills_are_the_rooms_skills_at_the_pins(self):
+        rooms = ROOT / "rooms"
+        if not rooms.is_dir():
+            self.skipTest("run make get first: this compares the bundled skills with the pinned rooms")
+        for room in ("antechamber", "scriptorium", "vault-map"):
+            src = rooms / room / "plugin" / "skills" / room / "SKILL.md"
+            if not src.is_file():
+                self.skipTest(f"rooms/{room} not fetched")
+            bundled = (ROOT / "plugin" / "codex-skills" / room / "SKILL.md").read_text()
+            self.assertEqual(bundled, src.read_text(), room)
+
     def test_make_get_fetches_every_room_by_its_pin(self):
         make = (ROOT / "Makefile").read_text()
         for room, var in (("scriptorium", "SCRIPTORIUM"), ("antechamber", "ANTECHAMBER"), ("vault-map", "VAULT_MAP")):

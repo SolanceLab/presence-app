@@ -18,7 +18,7 @@ Everything runs on your own computer. Each room also works alone, from its own r
 
 Every House of Solance plugin is also listed in the SolanceLab store: [github.com/SolanceLab/plugins](https://github.com/SolanceLab/plugins).
 
-The exact release of each room is pinned in the `Makefile` and `.claude-plugin/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
+The exact release of each room is pinned in the `Makefile`, `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
 
 ## Benchmarks
 
@@ -36,7 +36,8 @@ These measure recall (did the evidence reach the reader), not answer accuracy. M
 ## What you need
 
 - Python 3.11 or newer, on macOS or Linux (Antechamber needs 3.11; Scriptorium 3.9; vault-map 3.8). Standard library only.
-- Claude Code, for the plugins.
+- Claude Code or Codex, for the plugins.
+- `uv` (its `uvx` command), which starts Antechamber itself: https://docs.astral.sh/uv/
 - A model for Scriptorium to write with: by default Claude Code itself; any other command that reads instructions and prints an answer also works.
 - Optional: a local embedding model (for example Ollama's `nomic-embed-text`) for Antechamber. Without one, it searches by words only.
 - Optional: Node 18 or newer, for Scriptorium's People page.
@@ -53,11 +54,25 @@ make get
 
 `rooms/` now holds `scriptorium`, `antechamber` and `vault-map`.
 
-2. Start each room's own service, as its README says: Scriptorium's server (`rooms/scriptorium`, port 8795) and Antechamber's recall service (`rooms/antechamber`, port 8790). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`).
+2. Start Scriptorium's server as its README says (`rooms/scriptorium`, port 8795). Antechamber needs no service: its plugin starts it itself in Claude Code and Codex (its own recall service on port 8790 is only for reaching it from claude.ai). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`).
 
 3. Connect them in Antechamber's settings (`~/.config/antechamber/config.toml`): Scriptorium's memories folder as a `[[adapters.memories]]` shelf, your vault as a `[[adapters.vaultmap]]` shelf with `vault_map` set to the full path of `rooms/vault-map/vault-map.py` (for example `~/presence-app/rooms/vault-map/vault-map.py`, not a relative path).
 
-4. Install both plugins in Claude Code from this set:
+4. Install the set. The easy way is ONE install from the SolanceLab store, which brings all three rooms:
+
+```
+claude plugin marketplace add SolanceLab/plugins
+claude plugin install presence-app@solancelab
+```
+
+In Codex the same single install works (the plugin carries the three rooms' skills and connections itself):
+
+```
+codex plugin marketplace add SolanceLab/plugins
+codex plugin add presence-app@solancelab
+```
+
+Or install the rooms one by one from this set in Claude Code:
 
 ```
 claude plugin marketplace add SolanceLab/presence-app
@@ -65,13 +80,21 @@ claude plugin install scriptorium@presence-app
 claude plugin install antechamber@presence-app
 ```
 
-When each plugin asks, give it its server address and the key you started that server with.
+In Codex:
+
+```
+codex plugin marketplace add SolanceLab/presence-app
+codex plugin add scriptorium@presence-app
+codex plugin add antechamber@presence-app
+```
+
+When the Scriptorium plugin asks, give it its server address and the key you started that server with. Antechamber asks for nothing.
 
 Want only one room? Use its own repository: Scriptorium and Antechamber are each their own plugin marketplace, and vault-map is a single file you can copy anywhere.
 
 ## Settings
 
-presence-app has none of its own. Each room names its own: Scriptorium's server address and key (`SCRIPTORIUM_MCP_KEY`), Antechamber's server address and key (`[mcp] key`).
+presence-app has none of its own. Each room names its own: Scriptorium's server address and key (`SCRIPTORIUM_MCP_KEY`), Antechamber needs no address or key with its plugin (the `[mcp] key` is only for its remote door).
 
 ## Tools
 
@@ -92,7 +115,7 @@ On each new session each plugin makes one request for its own public version fil
 ## Limits
 
 - The plugins are pinned to released versions; a room's newer release reaches this set the next day, once the tests pass.
-- presence-app runs nothing itself: if a room's service is not running, its plugin cannot answer.
+- presence-app runs nothing itself. Antechamber starts itself (it needs `uv`); Scriptorium's plugin cannot answer until its server is running.
 - Every room's own limits apply; they are listed in its README.
 
 ## How it works

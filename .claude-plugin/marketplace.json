@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "presence-app: give your AI a way to remember. Scriptorium writes the record; Antechamber finds it again.",
-    "version": "2.1.1"
+    "version": "2.2.0"
   },
   "plugins": [
     {
@@ -18,13 +18,13 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/scriptorium.git",
         "path": "plugin",
-        "ref": "v1.1.0",
-        "sha": "1d69c4197f6ac67c9e0525656468262262b10f74"
+        "ref": "v1.1.1",
+        "sha": "0162242158b0524d56425ecbed46303d04e178fc"
       }
     },
     {
       "name": "antechamber",
-      "description": "One question searches every store you connect (notes, chats, memories, a vault) and returns only the best matches. Talks to your own Antechamber server.",
+      "description": "One question searches every store you connect (notes, chats, memories, a vault) and returns only the best matches. Starts itself on your computer.",
       "author": {
         "name": "House of Solance"
       },
@@ -32,8 +32,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/antechamber.git",
         "path": "plugin",
-        "ref": "v1.1.0",
-        "sha": "0ff02dac09c26812043ef5f9bbd900f7d74169d6"
+        "ref": "v1.2.0",
+        "sha": "c2c242d0393ff3874af7dbb8e0ff6607daec3b4f"
       }
     }
   ]
