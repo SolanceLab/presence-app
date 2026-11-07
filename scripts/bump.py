@@ -320,6 +320,16 @@ def main(argv=None, root=ROOT, fetch=fetch_tags, releases=fetch_releases):
                 fh.write(new_make)
         old_v = (docs.get("claude", {}).get("metadata") or {}).get("version")
         new_v = (new_docs.get("claude", {}).get("metadata") or {}).get("version")
+        if new_v and new_v != old_v:
+            # the bundle plugin carries the store version too (tests/test_set.py checks they match)
+            for side in (".claude-plugin", ".codex-plugin"):
+                ppath = os.path.join(root, "plugin", side, "plugin.json")
+                if os.path.exists(ppath):
+                    with open(ppath, encoding="utf-8") as fh:
+                        pdoc = json.load(fh)
+                    pdoc["version"] = new_v
+                    with open(ppath, "w", encoding="utf-8") as fh:
+                        fh.write(json.dumps(pdoc, indent=2, ensure_ascii=False) + "\n")
         log_path = os.path.join(root, "CHANGELOG.md")
         if new_v and new_v != old_v and os.path.exists(log_path):
             with open(log_path, encoding="utf-8") as fh:

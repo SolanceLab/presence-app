@@ -247,6 +247,20 @@ class Main(unittest.TestCase):
         self.assertIn("v1.1.0", self.snapshot()[0])
         self.assertEqual(bump.main(["--check"], self.tmp, fetch, releases), 0)
 
+    def test_bundle_plugin_versions_follow_the_store_version(self):
+        # 7 Nov 2026: the daily bump raised the store version to 2.2.1 but left the bundle plugins at 2.2.0,
+        # so the store tests failed and the bundle could never move by itself.
+        for side in (".claude-plugin", ".codex-plugin"):
+            os.makedirs(os.path.join(self.tmp, "plugin", side), exist_ok=True)
+            with open(os.path.join(self.tmp, "plugin", side, "plugin.json"), "w", encoding="utf-8") as fh:
+                json.dump({"name": "presence-app", "version": "0.0.1"}, fh)
+        self.assertEqual(bump.main([], self.tmp, fetch, releases), 0)
+        with open(os.path.join(self.tmp, *bump.STORES["claude"]), encoding="utf-8") as fh:
+            want = json.load(fh)["metadata"]["version"]
+        for side in (".claude-plugin", ".codex-plugin"):
+            with open(os.path.join(self.tmp, "plugin", side, "plugin.json"), encoding="utf-8") as fh:
+                self.assertEqual(json.load(fh)["version"], want, side)
+
     def test_lookup_error_exits_nonzero_and_writes_nothing(self):
         def flaky(repo):
             if repo == "scriptorium":
