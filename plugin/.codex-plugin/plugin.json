@@ -1,6 +1,6 @@
 {
   "name": "presence-app",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "presence-app: give your AI a way to remember. One install adds Scriptorium (writes the record), Antechamber (finds it again) and vault-map (one more shelf).",
   "author": {
     "name": "House of Solance",

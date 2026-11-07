@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+Pins moved to the newest releases: antechamber v1.2.0 → v1.2.1.
+
 ## 2.2.0
 
 Works in Codex too: the set now has a Codex list (`.agents/plugins/marketplace.json`) beside the Claude Code one. Pins moved to Antechamber v1.2.0 (it starts itself in Claude Code and Codex, so there is no service to start for it), Scriptorium v1.1.1 (Codex connection) and vault-map v1.4.0. The daily job still moves a pin only to a published GitHub Release. The README steps follow.

@@ -15,7 +15,7 @@ When `recall` answers "Antechamber has no stores yet", set it up now, in this co
 4. Call `setup_stores` with `stores: [{kind, path, name?, format?}]`. Leave `embedder` out (words-only search) unless the user says Ollama runs on their computer; then `embedder: "ollama"` adds search by meaning. If the answer says a vault was set up as plain notes, pass that on.
 5. Repeat the user's original question with `recall`. No restart is needed.
 
-`setup_stores` and `look_for_stores` work only until stores exist. After that they are gone and a call is refused: later changes are made by the person editing the settings file, not by you, so tell them where it is instead of retrying. Folders outside the home folder, the home folder itself, and private ones (.ssh, .gnupg, .aws, .config, Library/Keychains and similar) are refused: ask for a different folder. Say plainly what it set up and where the settings file is.
+`setup_stores` and `look_for_stores` work only until stores exist. After that they are gone and a call is refused: later changes are made by the person editing the settings file, not by you, so tell them where it is instead of retrying. Folders outside the home folder, the home folder itself, and private ones (.ssh, .gnupg, .aws, .config, Library/Keychains and similar) are refused: ask for a different folder. Say plainly what it set up and where the settings file is (the plugin's own file, `~/.config/antechamber/plugin.toml`; a service `config.toml` beside it is not used by the plugin).
 
 ## Reach for `recall`
 

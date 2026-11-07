@@ -25,8 +25,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/antechamber.git",
         "path": "./plugin",
-        "ref": "v1.2.0",
-        "sha": "c2c242d0393ff3874af7dbb8e0ff6607daec3b4f"
+        "ref": "v1.2.1",
+        "sha": "936e836a5702c98e320bbf6a297084bcad97e935"
       },
       "policy": {
         "installation": "AVAILABLE",
