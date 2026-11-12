@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.2
+
+Pins moved to the newest releases: antechamber v1.2.1 → v1.3.0.
+
 ## 2.2.1
 
 Pins moved to the newest releases: antechamber v1.2.0 → v1.2.1.

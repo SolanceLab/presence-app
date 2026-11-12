@@ -1,8 +1,8 @@
 # `make get` fetches the three rooms at the releases this set was checked with; `make test` checks the set itself.
 SCRIPTORIUM = v1.1.1
 SCRIPTORIUM_SHA = 0162242158b0524d56425ecbed46303d04e178fc
-ANTECHAMBER = v1.2.1
-ANTECHAMBER_SHA = 936e836a5702c98e320bbf6a297084bcad97e935
+ANTECHAMBER = v1.3.0
+ANTECHAMBER_SHA = 6dc52a6f15ed089a7d05afc5a587c34c5c040860
 VAULT_MAP   = v1.4.0
 VAULT_MAP_SHA   = b14f7b1383c2add8cc66730cc9bfa23ef5a4b12d
 
