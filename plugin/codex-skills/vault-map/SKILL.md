@@ -12,7 +12,7 @@ vault-map is one Python file that maps a folder of markdown notes (an Obsidian v
 Every command starts with this prefix, and below `vault-map.py` stands for the whole prefix (`uvx --from ... vault-map.py`) each time, because `uvx` does not install the command for later use. `uvx` fetches vault-map once and runs it; Python 3.8 or newer is needed.
 
 ```
-uvx --from "git+https://github.com/SolanceLab/vault-map@v1.4.0" vault-map.py <command>
+uvx --from "git+https://github.com/SolanceLab/vault-map@v1.4.1" vault-map.py <command>
 ```
 
 If `uvx` is not found, install uv first (https://docs.astral.sh/uv/), or clone the repository and run `python3 vault-map.py <command>` from it.
@@ -33,6 +33,10 @@ Rebuild after the user adds many notes. The section index is kept in `~/.cache/v
 - `vault-map.py graph "<vault>" --out vault-map-graph.html` writes an interactive graph page the user opens in a browser.
 
 Set `VAULT_MAP_DIR` to make one vault the default.
+
+## Helping notes get found
+
+When the user asks how to write or tidy notes so they are easier to find, or when searches keep missing because notes have no real title, few headings or no links, read [MARKDOWN-GUIDE.md](MARKDOWN-GUIDE.md) beside this file and suggest the one or two habits that would help most. Suggest; never rewrite the user's notes unless they ask.
 
 ## Report what it found
 
