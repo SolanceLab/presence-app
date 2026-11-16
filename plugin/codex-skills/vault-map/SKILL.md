@@ -12,7 +12,7 @@ vault-map is one Python file that maps a folder of markdown notes (an Obsidian v
 Every command starts with this prefix, and below `vault-map.py` stands for the whole prefix (`uvx --from ... vault-map.py`) each time, because `uvx` does not install the command for later use. `uvx` fetches vault-map once and runs it; Python 3.8 or newer is needed.
 
 ```
-uvx --from "git+https://github.com/SolanceLab/vault-map@v1.4.1" vault-map.py <command>
+uvx --from "git+https://github.com/SolanceLab/vault-map@v1.4.2" vault-map.py <command>
 ```
 
 If `uvx` is not found, install uv first (https://docs.astral.sh/uv/), or clone the repository and run `python3 vault-map.py <command>` from it.
