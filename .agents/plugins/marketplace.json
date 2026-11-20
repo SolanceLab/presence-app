@@ -10,8 +10,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/scriptorium.git",
         "path": "./plugin",
-        "ref": "v1.4.0",
-        "sha": "1ed69e8152f01066092127fa565a3d8fdb00abed"
+        "ref": "v1.5.0",
+        "sha": "dc3fc22d8009d3349311020d336eaace1268a6ef"
       },
       "policy": {
         "installation": "AVAILABLE",
