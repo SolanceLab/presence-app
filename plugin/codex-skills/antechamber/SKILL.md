@@ -11,7 +11,7 @@ When `recall` answers "Antechamber has no stores yet", set it up now, in this co
 
 1. Ask two plain questions: "Where do you keep notes?" and "Do you have chat exports from Claude or ChatGPT?" Ask for full paths.
 2. Call `look_for_stores` with the paths the user gave. It only looks, on this computer: it counts files and peeks at the start of a few JSON files to tell the kind, and reports only the kind, never text. At most 20 paths.
-3. Offer a better option only when it fits: if it reports an `obsidian vault`, offer kind `vault`; if it reports `scriptorium memories`, offer kind `memories`. Otherwise stay with `notes` and `chats` (`format: "claude"` or `"chatgpt"`), and say nothing of vaults, memories or code maps.
+3. Offer a better option only when it fits: if it reports an `obsidian vault`, offer kind `vault`; if it reports `scriptorium chat notes` (or `scriptorium memories` on older engines), use kind `chatnotes` if the live `setup_stores` schema lists it, or kind `memories` on older engines. Otherwise stay with `notes` and `chats` (`format: "claude"` or `"chatgpt"`), and say nothing of vaults, chat notes or code maps.
 4. Call `setup_stores` with `stores: [{kind, path, name?, format?}]`. Leave `embedder` out (words-only search) unless the user says Ollama runs on their computer; then `embedder: "ollama"` adds search by meaning. If the answer says a vault was set up as plain notes, pass that on.
 5. Repeat the user's original question with `recall`. No restart is needed.
 
@@ -19,7 +19,7 @@ When `recall` answers "Antechamber has no stores yet", set it up now, in this co
 
 ## Reach for `recall`
 
-`recall` is one call over every store the user connected to Antechamber: notes, chat exports, written memories, a vault, a search service or a database. It returns only the best matches, already ranked, each with its date, its source and (for conversations) the lines around the hit.
+`recall` is one call over every store the user connected to Antechamber: notes, chat exports, chat notes, a vault, a search service or a database. It returns only the best matches, already ranked, each with its date, its source and (for conversations) the lines around the hit.
 
 - Ask in plain words, the way the user would ask. A full question works better than a list of keywords.
 - `limit` is 1–20, default 8. Raise it for "list everything" questions; keep it low otherwise.
