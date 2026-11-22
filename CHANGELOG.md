@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.13
+
+Pins moved to the newest releases: scriptorium v1.7.1 → v1.8.0.
+
 ## 2.2.12
 
 Pins moved to the newest releases: antechamber v1.3.0 → v1.4.0.

@@ -3,7 +3,7 @@ name: scriptorium
 description: >-
   Use when someone wants notes written from their chat history, one card per person gathered
   from those notes, their roster kept up to date from new chats, or to see their people.
-  Not for the AI's own journal: that is the pen (pen-writing skill).
+  Not for the AI's own journal: that is written with the journal tools (journal-writing skill).
 ---
 
 # Scriptorium
