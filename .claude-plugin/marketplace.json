@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "presence-app: give your AI a way to remember. Scriptorium writes the record; Antechamber finds it again.",
-    "version": "2.2.13"
+    "version": "2.2.14"
   },
   "plugins": [
     {
@@ -18,8 +18,8 @@
         "source": "git-subdir",
         "url": "https://github.com/SolanceLab/scriptorium.git",
         "path": "plugin",
-        "ref": "v1.8.0",
-        "sha": "2dba1a54f7563cb21ee16868dee46ef066270237"
+        "ref": "v1.9.0",
+        "sha": "3807a00087ae2ed960bf1a044bd8b2d4c3ae667e"
       }
     },
     {
