@@ -10,7 +10,7 @@ import urllib.request
 STORES = {"claude": (".claude-plugin", "marketplace.json"), "codex": (".agents", "plugins", "marketplace.json")}
 MAKE_VAR = re.compile(r"^([ \t]*)([A-Za-z_][A-Za-z0-9_]*)([ \t]*[:?]?=[ \t]*)(v\d+\.\d+\.\d+)([ \t]*)$", re.M)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-KNOWN_ROOMS = {"antechamber", "scriptorium", "vault-map", "stack-guard"}  # repos a Makefile may pin
+KNOWN_ROOMS = {"antechamber", "scriptorium", "vault-map", "work-map", "stack-guard"}  # repos a Makefile may pin
 SHA40 = r"[0-9a-fA-F]{40}"
 SEMVER = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 OWNER_URL = re.compile(r"^https://github\.com/SolanceLab/([A-Za-z0-9._-]+)\.git$")

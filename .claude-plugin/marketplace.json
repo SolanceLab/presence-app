@@ -4,8 +4,8 @@
     "name": "House of Solance"
   },
   "metadata": {
-    "description": "presence-app: give your AI a way to remember. Scriptorium writes the record; Antechamber finds it again.",
-    "version": "2.2.16"
+    "description": "presence-app: give your AI a way to remember. Scriptorium writes the record; Antechamber finds it again; vault-map and work-map add shelves.",
+    "version": "2.3.0"
   },
   "plugins": [
     {
@@ -34,6 +34,34 @@
         "path": "plugin",
         "ref": "v1.4.1",
         "sha": "84461da7ee364206da3b5fb4213faae52a94b666"
+      }
+    },
+    {
+      "name": "vault-map",
+      "description": "Ask where you wrote about something and get the passage back, from a map of your markdown or Obsidian vault. Runs on your own computer; nothing leaves it.",
+      "author": {
+        "name": "House of Solance"
+      },
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/SolanceLab/vault-map.git",
+        "path": "plugin",
+        "ref": "v1.4.2",
+        "sha": "2167c016c911b199df95acc66faee9636eb641ea"
+      }
+    },
+    {
+      "name": "work-map",
+      "description": "Keep your project record in plain markdown lines (decisions, pipeline items) with the writer commands and a skill, and read it back as a map: what is open, waiting and recently touched. Runs on your own computer.",
+      "author": {
+        "name": "House of Solance"
+      },
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/SolanceLab/work-map.git",
+        "path": "plugin",
+        "ref": "v0.5.2",
+        "sha": "57aa758e2c8b93c7b3f60050caf5f83713c749d2"
       }
     }
   ]

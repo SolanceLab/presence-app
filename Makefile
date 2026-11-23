@@ -1,15 +1,17 @@
-# `make get` fetches the three rooms at the releases this set was checked with; `make test` checks the set itself.
+# `make get` fetches the four rooms at the releases this set was checked with; `make test` checks the set itself.
 SCRIPTORIUM = v2.0.0
 SCRIPTORIUM_SHA = 17e64df091eefe288c4caad38072dc52a9d11a85
 ANTECHAMBER = v1.4.1
 ANTECHAMBER_SHA = 84461da7ee364206da3b5fb4213faae52a94b666
 VAULT_MAP   = v1.4.2
 VAULT_MAP_SHA   = 2167c016c911b199df95acc66faee9636eb641ea
+WORK_MAP    = v0.5.2
+WORK_MAP_SHA    = 57aa758e2c8b93c7b3f60050caf5f83713c749d2
 
 .PHONY: get test bump bump-check bundle
 get:
 	@mkdir -p rooms
-	@for pair in scriptorium:$(SCRIPTORIUM) antechamber:$(ANTECHAMBER) vault-map:$(VAULT_MAP); do \
+	@for pair in scriptorium:$(SCRIPTORIUM) antechamber:$(ANTECHAMBER) vault-map:$(VAULT_MAP) work-map:$(WORK_MAP); do \
 	  room=$${pair%%:*}; tag=$${pair#*:}; \
 	  if [ ! -d rooms/$$room ]; then \
 	    git -c advice.detachedHead=false clone -q --depth 1 --branch $$tag https://github.com/SolanceLab/$$room.git rooms/$$room || exit 1; \

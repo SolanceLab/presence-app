@@ -6,19 +6,40 @@ Made by House of Solance · free for noncommercial use · credit required
 
 The things that make an identity are already in a language model: it can reason, speak in its own voice, care, and change its mind. All except one: persistence, the ability to build up a self across time. That isn't a verdict on what it is. It's a design limitation, and design limitations can be fixed.
 
-presence-app gives your AI a way to remember. It is the House of Solance memory set, three rooms that work as one:
+presence-app gives your AI a way to remember. It is the House of Solance memory set, four rooms that work as one:
 
 | Room | What it does |
 |---|---|
-| [Scriptorium](https://github.com/SolanceLab/scriptorium) | **Writes the record.** Your chats become memories you can check, each with its exact words, source lines and real date, and your people roster fills itself. |
+| [Scriptorium](https://github.com/SolanceLab/scriptorium) | **Keeps your AI's journal and writes chat notes.** Your chats become notes you can check, each with its exact words, source lines and real date, and your people roster fills itself. It saves chats from Claude, ChatGPT or Grok with its browser extension. |
 | [Antechamber](https://github.com/SolanceLab/antechamber) | **Finds it again.** One question searches every store you connect at once and hands your AI only the best matches, dated, with their source and the lines around them. |
 | [vault-map](https://github.com/SolanceLab/vault-map) | **One more shelf.** A notes folder (an Obsidian vault, or any markdown) becomes something Antechamber can search, down to the passage that answers. |
+| [work-map](https://github.com/SolanceLab/work-map) | **Remembers why.** What you decided, what is still open and what shipped, from the plain notes you already keep; Antechamber searches it as the `workmap` store. |
 
 Everything runs on your own computer. Each room also works alone, from its own repository.
 
 Every House of Solance plugin is also listed in the SolanceLab store: [github.com/SolanceLab/plugins](https://github.com/SolanceLab/plugins).
 
 The exact release of each room is pinned in the `Makefile`, `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
+
+## Quick start
+
+Install all four tools for Claude Code:
+
+```
+claude plugin marketplace add SolanceLab/presence-app
+```
+
+Or one at a time from the House of Solance store:
+
+```
+claude plugin marketplace add SolanceLab/plugins
+claude plugin install scriptorium@solancelab
+claude plugin install antechamber@solancelab
+claude plugin install vault-map@solancelab
+claude plugin install work-map@solancelab
+```
+
+Codex users: see [Install](#install). Scriptorium's browser extension installs separately in Chrome: [docs/browser-export.md](https://github.com/SolanceLab/scriptorium/blob/main/docs/browser-export.md).
 
 ## Benchmarks
 
@@ -44,7 +65,7 @@ These measure recall (did the evidence reach the reader), not answer accuracy. M
 
 ## Install
 
-1. Fetch the three rooms at the releases this set was checked with:
+1. Fetch the four rooms at the releases this set was checked with:
 
 ```
 git clone https://github.com/SolanceLab/presence-app.git
@@ -52,20 +73,20 @@ cd presence-app
 make get
 ```
 
-`rooms/` now holds `scriptorium`, `antechamber` and `vault-map`.
+`rooms/` now holds `scriptorium`, `antechamber`, `vault-map` and `work-map`.
 
-2. Start Scriptorium's server as its README says (`rooms/scriptorium`, port 8795). Antechamber needs no service: its plugin starts it itself in Claude Code and Codex (its own recall service on port 8790 is only for reaching it from claude.ai). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`).
+2. Start Scriptorium's server as its README says (`rooms/scriptorium`, port 8795). Antechamber needs no service: its plugin starts it itself in Claude Code and Codex (its own recall service on port 8790 is only for reaching it from claude.ai). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`). To keep a project record, use work-map's writer commands, as its README says (`rooms/work-map`).
 
-3. Connect them in Antechamber's settings (`~/.config/antechamber/config.toml`): Scriptorium's memories folder as a `[[adapters.memories]]` shelf, your vault as a `[[adapters.vaultmap]]` shelf with `vault_map` set to the full path of `rooms/vault-map/vault-map.py` (for example `~/presence-app/rooms/vault-map/vault-map.py`, not a relative path).
+3. Connect them in Antechamber's settings (`~/.config/antechamber/config.toml`): Scriptorium's memories folder as a `[[adapters.memories]]` shelf, your vault as a `[[adapters.vaultmap]]` shelf with `vault_map` set to the full path of `rooms/vault-map/vault-map.py` (for example `~/presence-app/rooms/vault-map/vault-map.py`, not a relative path). To search your project record too, add a `[[adapters.workmap]]` shelf, as work-map's README shows.
 
-4. Install the set. The easy way is ONE install from the SolanceLab store, which brings all three rooms:
+4. Install the set. The easy way is ONE install from the SolanceLab store, which brings all four rooms:
 
 ```
 claude plugin marketplace add SolanceLab/plugins
 claude plugin install presence-app@solancelab
 ```
 
-In Codex the same single install works (the plugin carries the three rooms' skills and connections itself):
+In Codex the same single install works (the plugin carries the four rooms' skills and connections itself):
 
 ```
 codex plugin marketplace add SolanceLab/plugins
@@ -90,7 +111,7 @@ codex plugin add antechamber@presence-app
 
 When the Scriptorium plugin asks, give it its server address and the key you started that server with. Antechamber asks for nothing.
 
-Want only one room? Use its own repository: Scriptorium and Antechamber are each their own plugin marketplace, and vault-map is a single file you can copy anywhere.
+Want only one room? Each tool installs on its own from SolanceLab/plugins (`claude plugin install <name>@solancelab`, or `codex plugin add <name>@solancelab`), and each also has its own repository.
 
 ## Settings
 
@@ -102,6 +123,8 @@ presence-app has none of its own. Each room names its own: Scriptorium's server 
 |---|---|---|
 | Scriptorium | `write_memories` | Writes memories from a chat export, one file per conversation, each checked against the real lines before it is kept |
 | Scriptorium | `write_people` | Gathers each recurring person's memories onto one card, with source lines |
+| vault-map | `build` | Maps a notes folder so Antechamber can search it |
+| work-map | writer commands, `map` | Keeps decisions and pipeline items as plain lines, and reads them back as what is open, waiting and recently touched |
 | Antechamber | recall | Searches every connected shelf with one question and returns the best matches, dated, with their source |
 
 Each plugin carries its room's skill, which tells your AI when to use which tool.
@@ -120,7 +143,7 @@ On each new session each plugin makes one request for its own public version fil
 
 ## How it works
 
-presence-app holds no engine. Its plugin marketplace lists Scriptorium's and Antechamber's plugins, each fetched from its own repository at a pinned release, and `make get` clones the three rooms at those same releases, and on a second run checks that each folder is still at its release. Scriptorium writes memory files; Antechamber reads them as one of its shelves, beside your notes, your chats and your vault through vault-map.
+presence-app holds no engine. Its plugin marketplace lists the plugins of Scriptorium, Antechamber, vault-map and work-map, each fetched from its own repository at a pinned release, and `make get` clones the four rooms at those same releases, and on a second run checks that each folder is still at its release. Scriptorium writes memory files; Antechamber reads them as one of its shelves, beside your notes, your chats and your vault through vault-map, and your project record through work-map.
 
 The earlier presence-app template (rooms, state, journal, memory graph) is kept on the `template` branch, tag `template-v1`.
 

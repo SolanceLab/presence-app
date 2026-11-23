@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+
+The set now holds four tools: vault-map v1.4.2 and work-map v0.5.2 are listed in both plugin stores, `make get` and `make bundle` fetch work-map beside the other rooms, the bundle depends on it and carries its skill, and the README describes all four.
+
 ## 2.2.16
 
 Pins moved to the newest releases: antechamber v1.4.0 → v1.4.1.

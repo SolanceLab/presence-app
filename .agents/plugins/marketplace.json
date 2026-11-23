@@ -33,6 +33,36 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "vault-map",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/SolanceLab/vault-map.git",
+        "path": "./plugin",
+        "ref": "v1.4.2",
+        "sha": "2167c016c911b199df95acc66faee9636eb641ea"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "work-map",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/SolanceLab/work-map.git",
+        "path": "./plugin",
+        "ref": "v0.5.2",
+        "sha": "57aa758e2c8b93c7b3f60050caf5f83713c749d2"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }
