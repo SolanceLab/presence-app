@@ -26,7 +26,8 @@ The exact release of each room is pinned in the `Makefile`, `.claude-plugin/mark
 Install all four tools for Claude Code:
 
 ```
-claude plugin marketplace add SolanceLab/presence-app
+claude plugin marketplace add SolanceLab/plugins
+claude plugin install presence-app@solancelab
 ```
 
 Or one at a time from the House of Solance store:
@@ -99,6 +100,8 @@ Or install the rooms one by one from this set in Claude Code:
 claude plugin marketplace add SolanceLab/presence-app
 claude plugin install scriptorium@presence-app
 claude plugin install antechamber@presence-app
+claude plugin install vault-map@presence-app
+claude plugin install work-map@presence-app
 ```
 
 In Codex:
@@ -107,6 +110,8 @@ In Codex:
 codex plugin marketplace add SolanceLab/presence-app
 codex plugin add scriptorium@presence-app
 codex plugin add antechamber@presence-app
+codex plugin add vault-map@presence-app
+codex plugin add work-map@presence-app
 ```
 
 When the Scriptorium plugin asks, give it its server address and the key you started that server with. Antechamber asks for nothing.
