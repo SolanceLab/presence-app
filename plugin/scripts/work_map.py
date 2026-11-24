@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# presence-app — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 # work-map — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 """work-map: read tagged lines (decisions, pipeline, tasks, ships) and link them into a graph.
 

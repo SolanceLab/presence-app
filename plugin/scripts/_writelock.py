@@ -1,4 +1,3 @@
-# presence-app — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 # work-map — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 """Shared by both writers (pipeline.py and decisions.py): one exclusive lock per real file path, and the
 rule that an implicit config may only write inside its own folder."""

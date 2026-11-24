@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# presence-app — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 # work-map — Copyright (c) 2026 House of Solance. PolyForm Noncommercial 1.0.0. Required Notice: Copyright (c) 2026 House of Solance (https://github.com/SolanceLab)
 """ships.py add — write one ship line (the shape work_map.py reads), once per release.
 
