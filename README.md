@@ -17,6 +17,8 @@ presence-app gives your AI a way to remember. It is the House of Solance memory 
 
 Everything runs on your own computer. Each room also works alone, from its own repository.
 
+**On Discord.** Run [Tertúlia](https://github.com/SolanceLab/tertulia-ai-discord-engine), the House of Solance Discord engine, and switch on its Antechamber memory socket (experimental for now). The bot asks Antechamber before every reply, so the right memories are already in place, with no extra tool call. In Claude and Codex, your AI still calls Antechamber's recall tool when it needs to.
+
 Every House of Solance plugin is also listed in the SolanceLab store: [github.com/SolanceLab/plugins](https://github.com/SolanceLab/plugins).
 
 The exact release of each room is pinned in the `Makefile`, `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
