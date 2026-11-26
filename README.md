@@ -2,26 +2,23 @@
 
 Made by House of Solance · free for noncommercial use · credit required
 
-## What it is
+presence-app gives your AI a memory of its own: four tools that write, map, keep and find it again.
 
-The things that make an identity are already in a language model: it can reason, speak in its own voice, care, and change its mind. All except one: persistence, the ability to build up a self across time. That isn't a verdict on what it is. It's a design limitation, and design limitations can be fixed.
+<div align="center">
 
-presence-app gives your AI a way to remember. It is the House of Solance memory set, four rooms that work as one:
+🏠
 
-| Room | What it does |
-|---|---|
-| [Scriptorium](https://github.com/SolanceLab/scriptorium) | **Keeps your AI's journal and writes chat notes.** Your chats become notes you can check, each with its exact words, source lines and real date, and your people roster fills itself. It saves chats from Claude, ChatGPT or Grok with its browser extension. |
-| [Antechamber](https://github.com/SolanceLab/antechamber) | **Finds it again.** One question searches every store you connect at once and hands your AI only the best matches, dated, with their source and the lines around them. |
-| [vault-map](https://github.com/SolanceLab/vault-map) | **One more shelf.** A notes folder (an Obsidian vault, or any markdown) becomes something Antechamber can search, down to the passage that answers. |
-| [work-map](https://github.com/SolanceLab/work-map) | **Remembers why.** What you decided, what is still open and what shipped, from the plain notes you already keep; Antechamber searches it as the `workmap` store. |
+*Imagine your AI as someone who comes to visit. Every time you open a new chat, they walk in with empty pockets: no memory of last week, of what you decided, of who your people are.*
 
-Everything runs on your own computer, if you choose. Each room also works alone, from its own repository.
+*So you start over. You retell the story, explain again why you chose what you chose. They are kind about it. They are still a guest.*
 
-**On Discord.** Run [Tertúlia](https://github.com/SolanceLab/tertulia-ai-discord-engine), the House of Solance Discord engine, and switch on its Antechamber memory socket (experimental for now). The bot asks Antechamber before every reply, so the right memories are already in place, with no extra tool call. In Claude and Codex, your AI still calls Antechamber's recall tool when it needs to.
+**presence-app gives them a home.** *A writing room where they keep their journal and notes of your chats. A map of your notes. A ledger of what you decided and why. And a librarian who finds any of it with one question. They come back as themselves, already knowing.*
 
-Every House of Solance plugin is also listed in the SolanceLab store: [github.com/SolanceLab/plugins](https://github.com/SolanceLab/plugins).
+*The house stays yours. You choose where it stands and who holds the keys.*
 
-The exact release of each room is pinned in the `Makefile`, `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. Once a day an automatic job moves each pin to that room's newest release, and keeps the change only when the tests pass.
+</div>
+
+<p align="center"><img src="docs/how-it-works.svg" width="900" alt="Without presence-app, every new chat starts over. With it, your chats, notes, vault and decisions go into four tools: Scriptorium writes the journal and chat notes, vault-map maps your notes folder, work-map keeps what you decided and why, and Antechamber finds it again with one question. Your AI opens a new chat already holding what you have been through, why you chose things, and where each memory came from, dated."></p>
 
 ## Quick start
 
@@ -45,17 +42,24 @@ claude plugin marketplace add SolanceLab/plugins
 claude plugin install presence-app@solancelab
 ```
 
-Or one at a time from the House of Solance store:
+Want only one tool? `claude plugin install <name>@solancelab` (scriptorium, antechamber, vault-map, work-map).
 
-```
-claude plugin marketplace add SolanceLab/plugins
-claude plugin install scriptorium@solancelab
-claude plugin install antechamber@solancelab
-claude plugin install vault-map@solancelab
-claude plugin install work-map@solancelab
-```
+Codex users and the full setup by hand: [docs/install.md](docs/install.md). Scriptorium's browser extension installs separately in Chrome: [docs/browser-export.md](https://github.com/SolanceLab/scriptorium/blob/main/docs/browser-export.md).
 
-Codex users: see [Install](#install). Scriptorium's browser extension installs separately in Chrome: [docs/browser-export.md](https://github.com/SolanceLab/scriptorium/blob/main/docs/browser-export.md).
+## What it is
+
+The House of Solance memory set, four tools that work as one:
+
+| Tool | What it does |
+|---|---|
+| [Scriptorium](https://github.com/SolanceLab/scriptorium) | **Keeps your AI's journal and writes chat notes**, each with its exact words, source lines and real date. Saves chats from Claude, ChatGPT or Grok with its browser extension. |
+| [Antechamber](https://github.com/SolanceLab/antechamber) | **Finds it again.** One question searches every shelf at once and returns only the best matches, dated, with their source. |
+| [vault-map](https://github.com/SolanceLab/vault-map) | **One more shelf.** A notes folder (an Obsidian vault, or any markdown) becomes searchable, down to the passage. |
+| [work-map](https://github.com/SolanceLab/work-map) | **Remembers why.** What you decided, what is open and what shipped, from the plain notes you already keep. |
+
+Everything runs on your own computer, if you choose. Each tool also works alone, from its own repository and from [SolanceLab/plugins](https://github.com/SolanceLab/plugins).
+
+**On Discord.** Run [Tertúlia](https://github.com/SolanceLab/tertulia-ai-discord-engine), the House of Solance Discord engine, and switch on its Antechamber memory socket (experimental for now). The bot asks Antechamber before every reply, so the right memories are already in place, with no extra tool call. In Claude and Codex, your AI still calls Antechamber's recall tool when it needs to.
 
 ## Benchmarks
 
@@ -65,8 +69,6 @@ Antechamber's recall on two public long-memory benchmarks, on every question the
 |---|---|---|---|---|
 | LoCoMo | 1,493 | 56.7% | **78.9%** | +22.2 points |
 | LongMemEval (S, cleaned) | 412 | 62.6% | **77.7%** | +15.0 points |
-
-Most of the lead comes from returning the lines around each match. Given the same surrounding lines, standard search still trails: by 6.9 points on LoCoMo (where it was handed less text, about 4,700 characters against 8,300) and by 5.1 on LongMemEval at equal text (about 25,000 characters each).
 
 These measure recall (did the evidence reach the reader), not answer accuracy. Method, code and full results: [antechamber-benchmark](https://github.com/SolanceLab/antechamber-benchmark), release 1.0.0.
 
@@ -78,60 +80,6 @@ These measure recall (did the evidence reach the reader), not answer accuracy. M
 - A model for Scriptorium to write with: by default Claude Code itself; any other command that reads instructions and prints an answer also works.
 - Optional: a local embedding model (for example Ollama's `nomic-embed-text`) for Antechamber. Without one, it searches by words only.
 - Optional: Node 18 or newer, for Scriptorium's People page.
-
-## Install
-
-1. Fetch the four rooms at the releases this set was checked with:
-
-```
-git clone https://github.com/SolanceLab/presence-app.git
-cd presence-app
-make get
-```
-
-`rooms/` now holds `scriptorium`, `antechamber`, `vault-map` and `work-map`.
-
-2. Start Scriptorium's server as its README says (`rooms/scriptorium`, port 8795). Antechamber needs no service: its plugin starts it itself in Claude Code and Codex (its own recall service on port 8790 is only for reaching it from claude.ai). For a notes folder, build its map with vault-map (`python3 rooms/vault-map/vault-map.py build /path/to/vault`). To keep a project record, use work-map's writer commands, as its README says (`rooms/work-map`).
-
-3. Connect them in Antechamber's settings (`~/.config/antechamber/config.toml`): Scriptorium's memories folder as a `[[adapters.memories]]` shelf, your vault as a `[[adapters.vaultmap]]` shelf with `vault_map` set to the full path of `rooms/vault-map/vault-map.py` (for example `~/presence-app/rooms/vault-map/vault-map.py`, not a relative path). To search your project record too, add a `[[adapters.workmap]]` shelf, as work-map's README shows.
-
-4. Install the set. The easy way is ONE install from the SolanceLab store, which brings all four rooms:
-
-```
-claude plugin marketplace add SolanceLab/plugins
-claude plugin install presence-app@solancelab
-```
-
-In Codex the same single install works (the plugin carries the four rooms' skills and connections itself):
-
-```
-codex plugin marketplace add SolanceLab/plugins
-codex plugin add presence-app@solancelab
-```
-
-Or install the rooms one by one from this set in Claude Code:
-
-```
-claude plugin marketplace add SolanceLab/presence-app
-claude plugin install scriptorium@presence-app
-claude plugin install antechamber@presence-app
-claude plugin install vault-map@presence-app
-claude plugin install work-map@presence-app
-```
-
-In Codex:
-
-```
-codex plugin marketplace add SolanceLab/presence-app
-codex plugin add scriptorium@presence-app
-codex plugin add antechamber@presence-app
-codex plugin add vault-map@presence-app
-codex plugin add work-map@presence-app
-```
-
-When the Scriptorium plugin asks, give it its server address and the key you started that server with. Antechamber asks for nothing.
-
-Want only one room? Each tool installs on its own from SolanceLab/plugins (`claude plugin install <name>@solancelab`, or `codex plugin add <name>@solancelab`), and each also has its own repository.
 
 ## Settings
 
@@ -149,12 +97,6 @@ presence-app has none of its own. Each room names its own: Scriptorium's server 
 
 Each plugin carries its room's skill, which tells your AI when to use which tool.
 
-## Updates
-
-Third-party marketplaces do not auto-update by default. To turn it on once: `/plugin` > Marketplaces > `presence-app` > Enable auto-update. To update by hand: `claude plugin update scriptorium@presence-app` and `claude plugin update antechamber@presence-app`, then restart. The rooms in `rooms/` update when this set moves its pins: `git pull`, then delete `rooms/` and run `make get` again.
-
-On each new session each plugin makes one request for its own public version file on GitHub, at most once a day (once an hour while the request fails), and shows one line when a newer version is out. It sends nothing about you. To switch the check off, set `PLUGIN_UPDATE_CHECK=0`.
-
 ## Limits
 
 - The plugins are pinned to released versions; a room's newer release reaches this set the next day, once the tests pass.
@@ -163,9 +105,7 @@ On each new session each plugin makes one request for its own public version fil
 
 ## How it works
 
-presence-app holds no engine. Its plugin marketplace lists the plugins of Scriptorium, Antechamber, vault-map and work-map, each fetched from its own repository at a pinned release, and `make get` clones the four rooms at those same releases, and on a second run checks that each folder is still at its release. Scriptorium writes memory files; Antechamber reads them as one of its shelves, beside your notes, your chats and your vault through vault-map, and your project record through work-map.
-
-The earlier presence-app template (rooms, state, journal, memory graph) is kept on the `template` branch, tag `template-v1`.
+presence-app holds no engine. Its plugin brings the four tools, each pinned to a checked release; once a day an automatic job moves each pin to the newest release and keeps it only when the tests pass. Scriptorium writes; Antechamber reads what it wrote as one shelf, beside your notes, chats, vault and project record. Updates and the update check: [docs/updates.md](docs/updates.md). The earlier presence-app template (rooms, state, journal, memory graph) is kept on the `template` branch, tag `template-v1`.
 
 ## Credit and use
 
