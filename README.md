@@ -15,7 +15,7 @@ presence-app gives your AI a way to remember. It is the House of Solance memory 
 | [vault-map](https://github.com/SolanceLab/vault-map) | **One more shelf.** A notes folder (an Obsidian vault, or any markdown) becomes something Antechamber can search, down to the passage that answers. |
 | [work-map](https://github.com/SolanceLab/work-map) | **Remembers why.** What you decided, what is still open and what shipped, from the plain notes you already keep; Antechamber searches it as the `workmap` store. |
 
-Everything runs on your own computer. Each room also works alone, from its own repository.
+Everything runs on your own computer, if you choose. Each room also works alone, from its own repository.
 
 **On Discord.** Run [Tertúlia](https://github.com/SolanceLab/tertulia-ai-discord-engine), the House of Solance Discord engine, and switch on its Antechamber memory socket (experimental for now). The bot asks Antechamber before every reply, so the right memories are already in place, with no extra tool call. In Claude and Codex, your AI still calls Antechamber's recall tool when it needs to.
 
