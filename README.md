@@ -25,7 +25,20 @@ The exact release of each room is pinned in the `Makefile`, `.claude-plugin/mark
 
 ## Quick start
 
-Install all four tools for Claude Code:
+**Let your AI do it.** Copy this and send it to Claude Code:
+
+```
+Please install the Presence App for me. If uv is not installed, install it first:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+Then run:
+claude plugin marketplace add SolanceLab/plugins
+claude plugin install presence-app@solancelab
+Then guide me through the rest, step by step.
+```
+
+Using Codex? Send the same message with `codex plugin marketplace add SolanceLab/plugins` and `codex plugin add presence-app@solancelab`.
+
+**Or do it yourself.** You need [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`). It fetches Python and Antechamber itself. Install all four tools for Claude Code:
 
 ```
 claude plugin marketplace add SolanceLab/plugins
