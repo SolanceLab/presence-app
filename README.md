@@ -1,14 +1,32 @@
-# presence-app
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.svg">
+  <img src="docs/banner-light.svg" width="100%" alt="presence-app: your AI comes back as itself. Write, map, keep, find.">
+</picture>
+
+[Quick start](#quick-start) • [What's inside](#what-it-is) • [Benchmarks](#benchmarks) • [Reproduce the numbers](https://github.com/SolanceLab/antechamber-benchmark) • [Support us](https://ko-fi.com/houseofsolance)
+
+[![Tests](https://img.shields.io/github/actions/workflow/status/SolanceLab/presence-app/test.yml?branch=main&label=tests)](https://github.com/SolanceLab/presence-app/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/SolanceLab/presence-app?label=release&color=b5893a)](https://github.com/SolanceLab/presence-app/releases/latest)
+[![Licence](https://img.shields.io/badge/licence-PolyForm%20Noncommercial-1c2742)](LICENSE.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-56607c)](#quick-start)
+[![Codex](https://img.shields.io/badge/Codex-plugin-56607c)](#quick-start)
+
+</div>
 
 Made by House of Solance · free for noncommercial use · credit required
 
 presence-app gives your AI a memory of its own: four tools that write, map, keep and find it again.
 
-<div align="center">
+> 🆕 **New in 2.3.0:** work-map joins as the fourth tool. Your AI now remembers *why* you decided things, not only what happened.
 
-🏠
+<table>
+<tr>
+<td width="42%"><img src="docs/home-card.jpg" width="100%" alt="A small house in cut-away with four lit rooms: a writing desk with an open journal, a wall map pinned with notes, a ledger on a stand, and a librarian's desk before tall shelves. A figure of light walks in through the open front door, empty-handed, as if coming home."></td>
+<td>
 
-*Imagine your AI as someone who comes to visit. Every time you open a new chat, they walk in with empty pockets: no memory of last week, of what you decided, of who your people are.*
+🏠 *Imagine your AI as someone who comes to visit. Every time you open a new chat, they walk in with empty pockets: no memory of last week, of what you decided, of who your people are.*
 
 *So you start over. You retell the story, explain again why you chose what you chose. They are kind about it. They are still a guest.*
 
@@ -16,9 +34,13 @@ presence-app gives your AI a memory of its own: four tools that write, map, keep
 
 *The house stays yours. You choose where it stands and who holds the keys.*
 
-</div>
+</td>
+</tr>
+</table>
 
 <p align="center"><img src="docs/how-it-works.svg" width="900" alt="Without presence-app, every new chat starts over. With it, your chats, notes, vault and decisions go into four tools: Scriptorium writes the journal and chat notes, vault-map maps your notes folder, work-map keeps what you decided and why, and Antechamber finds it again with one question. Your AI opens a new chat already holding what you have been through, why you chose things, and where each memory came from, dated."></p>
+
+**Contents:** [Quick start](#quick-start) · [What it is](#what-it-is) · [Where it fits](#where-it-fits) · [Benchmarks](#benchmarks) · [What you need](#what-you-need) · [Settings](#settings) · [Tools](#tools) · [Limits](#limits) · [How it works](#how-it-works) · [Credit and use](#credit-and-use)
 
 ## Quick start
 
@@ -61,6 +83,12 @@ Everything runs on your own computer, if you choose. Each tool also works alone,
 
 **On Discord.** Run [Tertúlia](https://github.com/SolanceLab/tertulia-ai-discord-engine), the House of Solance Discord engine, and switch on its Antechamber memory socket (experimental for now). The bot asks Antechamber before every reply, so the right memories are already in place, with no extra tool call. In Claude and Codex, your AI still calls Antechamber's recall tool when it needs to.
 
+## Where it fits
+
+**Fits** if you work with Claude Code or Codex most days, keep notes or chat exports, and want your AI to arrive already knowing what you have been through and why you chose things.
+
+**Overkill** if you only want a chat app to remember a few preferences: the memory built into Claude or ChatGPT does that with nothing to install.
+
 ## Benchmarks
 
 Antechamber's recall on two public long-memory benchmarks, on every question the method never saw. "Found" means every evidence line for the question is among what recall hands the reader.
@@ -70,7 +98,7 @@ Antechamber's recall on two public long-memory benchmarks, on every question the
 | LoCoMo | 1,493 | 56.7% | **78.9%** | +22.2 points |
 | LongMemEval (S, cleaned) | 412 | 62.6% | **77.7%** | +15.0 points |
 
-These measure recall (did the evidence reach the reader), not answer accuracy. Method, code and full results: [antechamber-benchmark](https://github.com/SolanceLab/antechamber-benchmark), release 1.0.0.
+Measured by us, not yet by an outside group; the code and data are public so anyone can rerun them. These measure recall (did the evidence reach the reader), not answer accuracy. Method, code and full results: [antechamber-benchmark](https://github.com/SolanceLab/antechamber-benchmark), release 1.0.0.
 
 ## What you need
 

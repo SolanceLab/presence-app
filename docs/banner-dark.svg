@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 280" width="1280" height="280" role="img" aria-label="presence-app: your AI comes back as itself">
+  <rect width="1280" height="280" rx="18" fill="#141c30"/>
+  <rect x="10" y="10" width="1260" height="260" rx="12" fill="none" stroke="#c9a052" stroke-opacity="0.45" stroke-width="1.5"/>
+  <g transform="translate(110,58)" fill="none" stroke="#fbf7ef" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M10 78 L90 14 L170 78"/>
+    <path d="M28 66 L28 160 L152 160 L152 66"/>
+    <path d="M128 40 L128 20 L144 20 L144 52"/>
+    <rect x="72" y="100" width="36" height="60" rx="18" fill="#f1c56a" stroke="#c9a052"/>
+    <rect x="44" y="84" width="20" height="20" rx="3" fill="#f1c56a" fill-opacity="0.55"/>
+    <rect x="116" y="84" width="20" height="20" rx="3" fill="#f1c56a" fill-opacity="0.55"/>
+  </g>
+  <text x="340" y="150" font-family="Georgia, 'Times New Roman', serif" font-size="84" fill="#fbf7ef" letter-spacing="1">presence-app</text>
+  <line x1="880" y1="70" x2="880" y2="210" stroke="#c9a052" stroke-width="2"/>
+  <text x="912" y="128" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-style="italic" fill="#d9cfbd">Your AI comes back</text>
+  <text x="912" y="172" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-style="italic" fill="#d9cfbd">as itself.</text>
+  <text x="342" y="196" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#c9a052" letter-spacing="4">WRITE · MAP · KEEP · FIND</text>
+</svg>
