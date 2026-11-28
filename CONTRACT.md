@@ -1,6 +1,6 @@
 # presence-app contract
 
-presence-app is a set, not a service: it lists three rooms and fetches them at pinned releases. It runs nothing and stores nothing itself.
+presence-app is a set, not a service: it lists four tools and fetches them at pinned releases. It runs nothing and stores nothing itself.
 
 ## Doors it offers
 
@@ -13,7 +13,7 @@ presence-app is a set, not a service: it lists three rooms and fetches them at p
 
 | Table / bucket / file | What is in it |
 |---|---|
-| `rooms/` (made by `make get`, not in the repo) | The three rooms' code, at the pinned releases |
+| `rooms/` (made by `make get`, not in the repo) | The four tools' code, at the pinned releases |
 
 Each room owns its own data; see its CONTRACT.md.
 
